@@ -1,16 +1,22 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
   <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <!-- <LogAnalytics /> -->
+  <!-- <LogQuery /> -->
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-// import app from './components/app.vue'
+// import LogAnalytics from './components/LogAnalytics.vue';
+// import LogQuery from './components/LogQuery.vue'
+
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
+    // LogAnalytics,
+    // LogQuery,
   }
 }
 </script>

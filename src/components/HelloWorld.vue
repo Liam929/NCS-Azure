@@ -16,18 +16,34 @@
     </header>
     <main>
       <h1>{{ pages[currentPage].name }}</h1>
-      <p>{{ pages[currentPage].description }}</p>
-      <div v-if="childPage">
+      <!-- <p>{{ pages[currentPage].description }}</p> -->
+      <!-- <div v-if="childPage">
         <h2>{{ childPage.name }}</h2>
         <p>{{ childPage.description }}</p>
-      </div>
+      </div> -->
+      <attack-chain v-if="currentPage === 0"></attack-chain>
+      <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
+      <log-process v-else-if="currentPage === 1 && childPage.name === 'Selected Logs'"></log-process>
+      <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Sub-page 1'"></log-graph>
     </main>
   </div>
 </template>
 <script>
-  export default {
+import { defineComponent } from 'vue';
+import LogAnalytics from './LogAnalytics.vue';
+import LogProcess from './LogProcess.vue';
+import AttackChain from './AttackChain.vue';
+import LogGraph from './LogGraph.vue';
+  export default defineComponent({
+    components:{
+      AttackChain,
+      LogAnalytics,
+      LogProcess,
+      LogGraph,
+    },
     data() {
       return {
+        tableData: [],
         currentPage: 0,
         childPage: null,
         pages: [
@@ -46,21 +62,21 @@
             ]
           },
           {
-            name: "bar2",
+            name: "Microsoft Sentinel Logs",
             description: "This is the second page",
             children: [
               {
-                name: "Sub-page 1",
+                name: "Raw Logs",
                 description: "This is a sub-page of Page 2"
               },
               {
-                name: "Sub-page 2",
+                name: "Selected Logs",
                 description: "This is another sub-page of Page 2"
               }
             ]
           },
           {
-            name: "Log Graph",
+            name: "Alert",
             description: "This is the third page",
             children: [
               {
@@ -70,7 +86,7 @@
             ]
           },
           {
-            name: "bar3",
+            name: "Log Graph",
             description: "This is the fourth page",
             children: [
               {
@@ -115,10 +131,14 @@
         this.currentPage = index;
       }
     }
-  };
+  });
+  
+  
 </script>
   
 <style>
+@import '~normalize.css/normalize.css';
+
 .app {
   max-width: 1200px;
   margin: 0 auto;
