@@ -1,0 +1,116 @@
+Time of Day,Process Name,PID,Operation,Path,Result,Detail
+8:15:22.0296719 AM,cmd.exe,1640,Process Start,,SUCCESS,"Parent PID: 4592, Command line: cmd.exe /C copy C:\Windows\System32\cmd.exe C:\svchost.exe && C:\svchost.exe /c echo T1105 > \\localhost\c$\T1105.txt, Current directory: C:\Users\azureuser\, Environment: 
+8:15:22.0296797 AM,cmd.exe,1640,Thread Create,,SUCCESS,Thread ID: 5852
+8:15:22.0357009 AM,cmd.exe,1640,Load Image,C:\Windows\System32\cmd.exe,SUCCESS,"Image Base: 0x7ff7fa710000, Image Size: 0x67000"
+8:15:22.0363859 AM,cmd.exe,1640,Load Image,C:\Windows\System32\ntdll.dll,SUCCESS,"Image Base: 0x7ff85ab10000, Image Size: 0x1f8000"
+8:15:22.0372300 AM,cmd.exe,1640,CreateFile,C:\Users\azureuser,SUCCESS,"Desired Access: Execute/Traverse, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0389096 AM,cmd.exe,1640,Load Image,C:\Windows\System32\kernel32.dll,SUCCESS,"Image Base: 0x7ff858c60000, Image Size: 0xbf000"
+8:15:22.0405685 AM,cmd.exe,1640,Load Image,C:\Windows\System32\KernelBase.dll,SUCCESS,"Image Base: 0x7ff858220000, Image Size: 0x2da000"
+8:15:22.0416779 AM,cmd.exe,1640,QueryNameInformationFile,C:\Windows\System32\KernelBase.dll,SUCCESS,Name: \Windows\System32\KernelBase.dll
+8:15:22.0419709 AM,cmd.exe,1640,QueryNameInformationFile,C:\Windows\System32\kernel32.dll,SUCCESS,Name: \Windows\System32\kernel32.dll
+8:15:22.0429477 AM,cmd.exe,1640,Load Image,C:\Windows\System32\msvcrt.dll,SUCCESS,"Image Base: 0x7ff859ea0000, Image Size: 0x9e000"
+8:15:22.0438275 AM,cmd.exe,1640,Load Image,C:\Windows\System32\combase.dll,SUCCESS,"Image Base: 0x7ff859fb0000, Image Size: 0x354000"
+8:15:22.0447139 AM,cmd.exe,1640,Load Image,C:\Windows\System32\ucrtbase.dll,SUCCESS,"Image Base: 0x7ff8587f0000, Image Size: 0x100000"
+8:15:22.0455008 AM,cmd.exe,1640,Load Image,C:\Windows\System32\rpcrt4.dll,SUCCESS,"Image Base: 0x7ff859d70000, Image Size: 0x126000"
+8:15:22.0483840 AM,cmd.exe,1640,QueryNameInformationFile,C:\Windows\System32\combase.dll,SUCCESS,Name: \Windows\System32\combase.dll
+8:15:22.0489311 AM,cmd.exe,1640,QueryNameInformationFile,C:\Windows\System32\cmd.exe,SUCCESS,Name: \Windows\System32\cmd.exe
+8:15:22.0525163 AM,cmd.exe,1640,QueryBasicInformationFile,C:\Users\azureuser,SUCCESS,"CreationTime: 3/29/2023 1:27:53 PM, LastAccessTime: 4/19/2023 8:15:22 AM, LastWriteTime: 4/19/2023 8:11:17 AM, ChangeTime: 4/19/2023 8:11:17 AM, FileAttributes: D"
+8:15:22.0525298 AM,cmd.exe,1640,CloseFile,C:\Users\azureuser,SUCCESS,
+8:15:22.0525800 AM,cmd.exe,1640,CreateFile,C:\,SUCCESS,"Desired Access: Read Data/List Directory, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0526215 AM,cmd.exe,1640,QueryDirectory,C:\Users,SUCCESS,"FileInformationClass: FileBothDirectoryInformation, Filter: Users, 2: Users"
+8:15:22.0526558 AM,cmd.exe,1640,CloseFile,C:\,SUCCESS,
+8:15:22.0527726 AM,cmd.exe,1640,CreateFile,C:\Users,SUCCESS,"Desired Access: Read Data/List Directory, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0528088 AM,cmd.exe,1640,QueryDirectory,C:\Users\azureuser,SUCCESS,"FileInformationClass: FileBothDirectoryInformation, Filter: azureuser, 2: azureuser"
+8:15:22.0528380 AM,cmd.exe,1640,CloseFile,C:\Users,SUCCESS,
+8:15:22.0538162 AM,cmd.exe,1640,CreateFile,C:\Windows\System32\cmd.exe,SUCCESS,"Desired Access: Read Attributes, Disposition: Open, Options: Open Reparse Point, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0538445 AM,cmd.exe,1640,QueryBasicInformationFile,C:\Windows\System32\cmd.exe,SUCCESS,"CreationTime: 3/11/2023 10:08:52 AM, LastAccessTime: 4/19/2023 8:15:22 AM, LastWriteTime: 3/11/2023 10:08:52 AM, ChangeTime: 4/12/2023 12:27:58 PM, FileAttributes: A"
+8:15:22.0538560 AM,cmd.exe,1640,CloseFile,C:\Windows\System32\cmd.exe,SUCCESS,
+8:15:22.0540326 AM,cmd.exe,1640,CreateFile,C:\Windows\System32,SUCCESS,"Desired Access: Read Data/List Directory, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0540621 AM,cmd.exe,1640,QueryDirectory,C:\Windows\System32\cmd.exe,SUCCESS,"FileInformationClass: FileFullDirectoryInformation, Filter: cmd.exe, 2: cmd.exe"
+8:15:22.0543225 AM,cmd.exe,1640,ReadFile,C:\Windows\System32\cmd.exe,SUCCESS,"Offset: 0, Length: 512, Priority: Normal"
+8:15:22.0550767 AM,cmd.exe,1640,QueryAttributeTagFile,C:\Windows\System32\cmd.exe,SUCCESS,"Attributes: A, ReparseTag: 0x0"
+8:15:22.0550887 AM,cmd.exe,1640,QueryStandardInformationFile,C:\Windows\System32\cmd.exe,SUCCESS,"AllocationSize: 290,816, EndOfFile: 289,792, NumberOfLinks: 2, DeletePending: False, Directory: False"
+8:15:22.0551099 AM,cmd.exe,1640,QueryStreamInformationFile,C:\Windows\System32\cmd.exe,SUCCESS,0: ::$DATA
+8:15:22.0551426 AM,cmd.exe,1640,QueryEaInformationFile,C:\Windows\System32\cmd.exe,SUCCESS,EaSize: 128
+8:15:22.0551541 AM,cmd.exe,1640,QueryEAFile,C:\Windows\System32\cmd.exe,SUCCESS,
+8:15:22.0554102 AM,cmd.exe,1640,CreateFile,C:\svchost.exe,SUCCESS,"Desired Access: Generic Read/Write, Delete, Write DAC, Disposition: OverwriteIf, Options: Sequential Access, Non-Directory File, Attributes: A, ShareMode: None, AllocationSize: 289,792, OpenResult: Created"
+8:15:22.0558272 AM,cmd.exe,1640,QueryNameInformationFile,C:\svchost.exe,SUCCESS,Name: \svchost.exe
+8:15:22.0558522 AM,cmd.exe,1640,QueryBasicInformationFile,C:\svchost.exe,SUCCESS,"CreationTime: 4/19/2023 8:15:22 AM, LastAccessTime: 4/19/2023 8:15:22 AM, LastWriteTime: 4/19/2023 8:15:22 AM, ChangeTime: 4/19/2023 8:15:22 AM, FileAttributes: A"
+8:15:22.0558895 AM,cmd.exe,1640,QueryAttributeInformationVolume,C:\svchost.exe,SUCCESS,"FileSystemAttributes: Case Preserved, Case Sensitive, Unicode, ACLs, Compression, Named Streams, EFS, Object IDs, Reparse Points, Sparse Files, Quotas, Transactions, 0x3c00600, MaximumComponentNameLength: 255, FileSystemName: NTFS"
+8:15:22.0559240 AM,cmd.exe,1640,QueryAttributeInformationVolume,C:\Windows\System32\cmd.exe,SUCCESS,"FileSystemAttributes: Case Preserved, Case Sensitive, Unicode, ACLs, Compression, Named Streams, EFS, Object IDs, Reparse Points, Sparse Files, Quotas, Transactions, 0x3c00600, MaximumComponentNameLength: 255, FileSystemName: NTFS"
+8:15:22.0565089 AM,cmd.exe,1640,Load Image,C:\Windows\System32\advapi32.dll,SUCCESS,"Image Base: 0x7ff85a310000, Image Size: 0xae000"
+8:15:22.0572743 AM,cmd.exe,1640,Load Image,C:\Windows\System32\sechost.dll,SUCCESS,"Image Base: 0x7ff859910000, Image Size: 0x9c000"
+8:15:22.0579575 AM,cmd.exe,1640,QueryNameInformationFile,C:\Windows\System32\sechost.dll,SUCCESS,Name: \Windows\System32\sechost.dll
+8:15:22.0582950 AM,cmd.exe,1640,QueryNameInformationFile,C:\Windows\System32\advapi32.dll,SUCCESS,Name: \Windows\System32\advapi32.dll
+8:15:22.0586227 AM,cmd.exe,1640,CreateFile,C:\Windows\System32\ntmarta.dll,SUCCESS,"Desired Access: Read Attributes, Disposition: Open, Options: Open Reparse Point, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0586559 AM,cmd.exe,1640,QueryBasicInformationFile,C:\Windows\System32\ntmarta.dll,SUCCESS,"CreationTime: 3/11/2023 10:09:04 AM, LastAccessTime: 4/19/2023 8:11:50 AM, LastWriteTime: 3/11/2023 10:09:04 AM, ChangeTime: 4/12/2023 12:27:58 PM, FileAttributes: A"
+8:15:22.0586681 AM,cmd.exe,1640,CloseFile,C:\Windows\System32\ntmarta.dll,SUCCESS,
+8:15:22.0588084 AM,cmd.exe,1640,CreateFileMapping,C:\Windows\System32\ntmarta.dll,SUCCESS,SyncType: SyncTypeOther
+8:15:22.0592922 AM,cmd.exe,1640,Load Image,C:\Windows\System32\ntmarta.dll,SUCCESS,"Image Base: 0x7ff857360000, Image Size: 0x33000"
+8:15:22.0596685 AM,cmd.exe,1640,QuerySecurityFile,C:\Windows\System32\cmd.exe,SUCCESS,Information: Attribute
+8:15:22.0598179 AM,cmd.exe,1640,QuerySecurityFile,C:\,SUCCESS,Information: Attribute
+8:15:22.0599220 AM,cmd.exe,1640,QuerySecurityFile,C:\svchost.exe,SUCCESS,"Information: Owner, Group, Attribute"
+8:15:22.0599815 AM,cmd.exe,1640,SetSecurityFile,C:\svchost.exe,SUCCESS,Information: Attribute
+8:15:22.0600678 AM,cmd.exe,1640,SetEndOfFileInformationFile,C:\svchost.exe,SUCCESS,"EndOfFile: 289,792"
+8:15:22.0612468 AM,cmd.exe,1640,SetBasicInformationFile,C:\svchost.exe,SUCCESS,"CreationTime: 1/1/1601 12:00:00 AM, LastAccessTime: 1/1/1601 12:00:00 AM, LastWriteTime: 3/11/2023 10:08:52 AM, ChangeTime: 4/12/2023 12:27:58 PM, FileAttributes: n/a"
+8:15:22.0613375 AM,cmd.exe,1640,ReadFile,C:\svchost.exe,SUCCESS,"Offset: 0, Length: 2"
+8:15:22.0613868 AM,cmd.exe,1640,CloseFile,C:\svchost.exe,SUCCESS,
+8:15:22.0619674 AM,cmd.exe,1640,CloseFile,C:\Windows\System32,SUCCESS,
+8:15:22.0622665 AM,cmd.exe,1640,CreateFile,C:\Windows\System32\en-US\cmd.exe.mui,SUCCESS,"Desired Access: Read Data/List Directory, Synchronize, Disposition: Open, Options: Synchronous IO Non-Alert, Non-Directory File, Attributes: n/a, ShareMode: Read, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0623258 AM,cmd.exe,1640,QueryStandardInformationFile,C:\Windows\System32\en-US\cmd.exe.mui,SUCCESS,"AllocationSize: 135,168, EndOfFile: 131,584, NumberOfLinks: 2, DeletePending: False, Directory: False"
+8:15:22.0623559 AM,cmd.exe,1640,CreateFileMapping,C:\Windows\System32\en-US\cmd.exe.mui,SUCCESS,SyncType: SyncTypeOther
+8:15:22.0684683 AM,cmd.exe,1640,CloseFile,\\localhost\IPC$,SUCCESS,
+8:15:22.0698223 AM,cmd.exe,1640,CreateFile,\\localhost\c$\T1105.txt,SUCCESS,"Desired Access: Generic Write, Read Attributes, Disposition: OverwriteIf, Options: Synchronous IO Non-Alert, Non-Directory File, Attributes: N, ShareMode: Read, AllocationSize: 0, OpenResult: Created"
+8:15:22.0719782 AM,cmd.exe,1640,QueryDeviceInformationVolume,\\localhost\c$\T1105.txt,SUCCESS,"DeviceType: Disk, Characteristics: Remote"
+8:15:22.0721477 AM,cmd.exe,1640,QueryNameInformationFile,C:\,SUCCESS,Name: \
+8:15:22.0722083 AM,cmd.exe,1640,QueryInformationVolume,C:\,SUCCESS,"VolumeCreationTime: 3/12/2023 4:13:08 AM, VolumeSerialNumber: AEF3-C135, SupportsObjects: True, VolumeLabel: Windows"
+8:15:22.0725025 AM,cmd.exe,1640,QueryDirectory,C:\svchost.exe,SUCCESS,"FileInformationClass: FileFullDirectoryInformation, Filter: svchost.exe, 2: svchost.exe"
+8:15:22.0727299 AM,cmd.exe,1640,CreateFile,C:\Windows\Globalization\Sorting\SortDefault.nls,SUCCESS,"Desired Access: Generic Read, Disposition: Open, Options: Synchronous IO Non-Alert, Non-Directory File, Attributes: N, ShareMode: Read, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0727759 AM,cmd.exe,1640,QueryStandardInformationFile,C:\Windows\Globalization\Sorting\SortDefault.nls,SUCCESS,"AllocationSize: 3,375,104, EndOfFile: 3,371,404, NumberOfLinks: 2, DeletePending: False, Directory: False"
+8:15:22.0727948 AM,cmd.exe,1640,CreateFileMapping,C:\Windows\Globalization\Sorting\SortDefault.nls,SUCCESS,SyncType: SyncTypeOther
+8:15:22.0728206 AM,cmd.exe,1640,CloseFile,C:\Windows\Globalization\Sorting\SortDefault.nls,SUCCESS,
+8:15:22.0733942 AM,cmd.exe,1640,WriteFile,C:\svchost.exe,SUCCESS,"Offset: 0, Length: 290,816, I/O Flags: Non-cached, Paging I/O, Synchronous Paging I/O, Priority: Normal"
+8:15:22.0739786 AM,cmd.exe,1640,CreateFileMapping,C:\svchost.exe,SUCCESS,SyncType: SyncTypeOther
+8:15:22.0740199 AM,cmd.exe,1640,QueryStandardInformationFile,C:\svchost.exe,SUCCESS,"AllocationSize: 290,816, EndOfFile: 289,792, NumberOfLinks: 1, DeletePending: False, Directory: False"
+8:15:22.0752016 AM,cmd.exe,1640,QueryAllInformationFile,C:\svchost.exe,SUCCESS,"CreationTime: 4/19/2023 8:15:22 AM, LastAccessTime: 4/19/2023 8:15:22 AM, LastWriteTime: 3/11/2023 10:08:52 AM, ChangeTime: 4/12/2023 12:27:58 PM, FileAttributes: A"
+8:15:22.0783210 AM,cmd.exe,1640,Process Create,C:\svchost.exe,SUCCESS,"PID: 5724, Command line: C:\svchost.exe  /c echo T1105 "
+8:15:22.0783300 AM,svchost.exe,5724,Process Start,,SUCCESS,"Parent PID: 1640, Command line: C:\svchost.exe  /c echo T1105 , Current directory: C:\Users\azureuser\, Environment: 
+8:15:22.0783384 AM,svchost.exe,5724,Thread Create,,SUCCESS,Thread ID: 9832
+8:15:22.0790221 AM,cmd.exe,1640,CreateFile,C:\Windows\apppatch\sysmain.sdb,SUCCESS,"Desired Access: Generic Read, Disposition: Open, Options: Synchronous IO Non-Alert, Non-Directory File, Attributes: N, ShareMode: Read, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0790798 AM,cmd.exe,1640,QueryBasicInformationFile,C:\Windows\apppatch\sysmain.sdb,SUCCESS,"CreationTime: 4/12/2023 12:27:10 PM, LastAccessTime: 4/19/2023 8:11:47 AM, LastWriteTime: 4/12/2023 12:27:10 PM, ChangeTime: 4/13/2023 9:17:11 AM, FileAttributes: A"
+8:15:22.0790936 AM,cmd.exe,1640,CloseFile,C:\Windows\apppatch\sysmain.sdb,SUCCESS,
+8:15:22.0795182 AM,cmd.exe,1640,QueryStandardInformationFile,C:\Windows\apppatch\sysmain.sdb,SUCCESS,"AllocationSize: 4,075,520, EndOfFile: 4,073,048, NumberOfLinks: 2, DeletePending: False, Directory: False"
+8:15:22.0796325 AM,cmd.exe,1640,CreateFileMapping,C:\Windows\apppatch\sysmain.sdb,SUCCESS,SyncType: SyncTypeOther
+8:15:22.0852620 AM,svchost.exe,5724,Load Image,C:\svchost.exe,SUCCESS,"Image Base: 0x7ff6961e0000, Image Size: 0x67000"
+8:15:22.0876726 AM,svchost.exe,5724,Load Image,C:\Windows\System32\ntdll.dll,SUCCESS,"Image Base: 0x7ff85ab10000, Image Size: 0x1f8000"
+8:15:22.0889757 AM,svchost.exe,5724,CreateFile,C:\Users\azureuser,SUCCESS,"Desired Access: Execute/Traverse, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.0905828 AM,svchost.exe,5724,Load Image,C:\Windows\System32\kernel32.dll,SUCCESS,"Image Base: 0x7ff858c60000, Image Size: 0xbf000"
+8:15:22.0917232 AM,svchost.exe,5724,Load Image,C:\Windows\System32\KernelBase.dll,SUCCESS,"Image Base: 0x7ff858220000, Image Size: 0x2da000"
+8:15:22.0931704 AM,svchost.exe,5724,QueryNameInformationFile,C:\Windows\System32\KernelBase.dll,SUCCESS,Name: \Windows\System32\KernelBase.dll
+8:15:22.0936187 AM,svchost.exe,5724,QueryNameInformationFile,C:\Windows\System32\kernel32.dll,SUCCESS,Name: \Windows\System32\kernel32.dll
+8:15:22.0952034 AM,svchost.exe,5724,Load Image,C:\Windows\System32\msvcrt.dll,SUCCESS,"Image Base: 0x7ff859ea0000, Image Size: 0x9e000"
+8:15:22.0961826 AM,svchost.exe,5724,Load Image,C:\Windows\System32\combase.dll,SUCCESS,"Image Base: 0x7ff859fb0000, Image Size: 0x354000"
+8:15:22.0969269 AM,svchost.exe,5724,Load Image,C:\Windows\System32\ucrtbase.dll,SUCCESS,"Image Base: 0x7ff8587f0000, Image Size: 0x100000"
+8:15:22.0977455 AM,svchost.exe,5724,Load Image,C:\Windows\System32\rpcrt4.dll,SUCCESS,"Image Base: 0x7ff859d70000, Image Size: 0x126000"
+8:15:22.0985955 AM,svchost.exe,5724,QueryDeviceInformationVolume,\\localhost\c$\T1105.txt,SUCCESS,"DeviceType: Disk, Characteristics: Remote"
+8:15:22.0986228 AM,svchost.exe,5724,ReadFile,C:\Windows\System32\drivers\rdbss.sys,SUCCESS,"Offset: 379,392, Length: 30,208, I/O Flags: Non-cached, Paging I/O, Synchronous Paging I/O, Priority: Normal"
+8:15:22.1008574 AM,svchost.exe,5724,QueryNameInformationFile,C:\Windows\System32\combase.dll,SUCCESS,Name: \Windows\System32\combase.dll
+8:15:22.1013558 AM,svchost.exe,5724,QueryNameInformationFile,C:\svchost.exe,SUCCESS,Name: \svchost.exe
+8:15:22.1028357 AM,svchost.exe,5724,QueryBasicInformationFile,C:\Users\azureuser,SUCCESS,"CreationTime: 3/29/2023 1:27:53 PM, LastAccessTime: 4/19/2023 8:15:22 AM, LastWriteTime: 4/19/2023 8:11:17 AM, ChangeTime: 4/19/2023 8:11:17 AM, FileAttributes: D"
+8:15:22.1028503 AM,svchost.exe,5724,CloseFile,C:\Users\azureuser,SUCCESS,
+8:15:22.1029025 AM,svchost.exe,5724,CreateFile,C:\,SUCCESS,"Desired Access: Read Data/List Directory, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.1029409 AM,svchost.exe,5724,QueryDirectory,C:\Users,SUCCESS,"FileInformationClass: FileBothDirectoryInformation, Filter: Users, 2: Users"
+8:15:22.1029723 AM,svchost.exe,5724,CloseFile,C:\,SUCCESS,
+8:15:22.1030882 AM,svchost.exe,5724,CreateFile,C:\Users,SUCCESS,"Desired Access: Read Data/List Directory, Synchronize, Disposition: Open, Options: Directory, Synchronous IO Non-Alert, Attributes: n/a, ShareMode: Read, Write, Delete, AllocationSize: n/a, OpenResult: Opened"
+8:15:22.1031372 AM,svchost.exe,5724,QueryDirectory,C:\Users\azureuser,SUCCESS,"FileInformationClass: FileBothDirectoryInformation, Filter: azureuser, 2: azureuser"
+8:15:22.1031655 AM,svchost.exe,5724,CloseFile,C:\Users,SUCCESS,
+8:15:22.1040515 AM,svchost.exe,5724,WriteFile,\\localhost\c$\T1105.txt,SUCCESS,"Offset: 0, Length: 8, Priority: Normal"
+8:15:22.1041016 AM,svchost.exe,5724,QueryStandardInformationFile,C:\T1105.txt,SUCCESS,"AllocationSize: 0, EndOfFile: 0, NumberOfLinks: 1, DeletePending: False, Directory: False"
+8:15:22.1041720 AM,svchost.exe,5724,WriteFile,C:\T1105.txt,SUCCESS,"Offset: 0, Length: 8"
+8:15:22.1046694 AM,svchost.exe,5724,Thread Exit,,SUCCESS,"Thread ID: 9832, User Time: 0.0000000, Kernel Time: 0.0000000"
+8:15:22.1050184 AM,svchost.exe,5724,Process Exit,,SUCCESS,"Exit Status: 0, User Time: 0.0000000 seconds, Kernel Time: 0.0000000 seconds, Private Bytes: 3,981,312, Peak Private Bytes: 4,182,016, Working Set: 4,313,088, Peak Working Set: 4,317,184"
+8:15:22.1065128 AM,cmd.exe,1640,CloseFile,\\localhost\c$\T1105.txt,SUCCESS,
+8:15:22.1070685 AM,cmd.exe,1640,Thread Exit,,SUCCESS,"Thread ID: 5380, User Time: 0.0000000, Kernel Time: 0.0000000"
+8:15:22.1076731 AM,cmd.exe,1640,Process Exit,,SUCCESS,"Exit Status: 0, User Time: 0.0156250 seconds, Kernel Time: 0.0156250 seconds, Private Bytes: 4,325,376, Peak Private Bytes: 4,927,488, Working Set: 5,185,536, Peak Working Set: 5,505,024"
+8:15:22.1077706 AM,cmd.exe,1640,RegSetValue,HKLM\System\CurrentControlSet\Services\bam\State\UserSettings\S-1-5-21-3812273841-921784874-4059084093-500\\Device\HarddiskVolume4\Windows\System32\cmd.exe,SUCCESS,"Type: REG_BINARY, Length: 24, Data: C4 E0 21 16 97 72 D9 01 00 00 00 00 00 00 00 00"
+8:15:22.1081453 AM,cmd.exe,1640,CloseFile,C:\Windows\System32\en-US\cmd.exe.mui,SUCCESS,

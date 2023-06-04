@@ -13,8 +13,10 @@
     "dayjs": "^1.11.7",
     "echarts": "^5.4.2",
     "element-plus": "^2.3.4",
+    "keylines": "file:keylines-7.1.0-4340923457.tgz",
     "moment": "^2.29.4",
     "normalize.css": "^8.0.1",
+    "papaparse": "^5.4.1",
     "vue": "^3.2.13"
   },
   "devDependencies": {

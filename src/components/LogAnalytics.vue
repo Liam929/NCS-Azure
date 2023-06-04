@@ -9,75 +9,76 @@
         :min-width="200"
       />
     </el-table>
-    <el-button type="primary" @click="getData">Log Query</el-button>
+    <!-- <el-button type="primary" @click="getData">Log Query</el-button> -->
   </div>
 </template>
   
 <script>
 import { defineComponent } from 'vue';
-import axios from 'axios';
-import { ElTable, ElTableColumn, ElButton } from 'element-plus';
+// import axios from 'axios';
+// import { ElTable, ElTableColumn, ElButton } from 'element-plus';
+import { ElTable, ElTableColumn } from 'element-plus';
+import Papa from 'papaparse'; // 引入 PapaParse 库
   
 export default defineComponent({
   components: {
     ElTable,
     ElTableColumn,
-    ElButton,
+    // ElButton,
   },
   data() {
     return {
       tableData: [],
       tableColumns: [
-        { name: 'TenantId', type: 'string' },
-        { name: 'SourceSystem', type: 'string' },
-        { name: 'TimeGenerated', type: 'datetime' },
-        { name: 'Source', type: 'string' },
-        { name: 'EventLog', type: 'string' },
-        { name: 'Computer', type: 'string' },
-        { name: 'EventLevel', type: 'int' },
-        { name: 'EventLevelName', type: 'string' },
-        { name: 'ParameterXml', type: 'string' },
-        { name: 'EventData', type: 'string' },
-        { name: 'EventID', type: 'int' },
-        { name: 'RenderedDescription', type: 'string' },
-        { name: 'AzureDeploymentID', type: 'string' },
-        { name: 'Role', type: 'string' },
-        { name: 'EventCategory', type: 'int' },
-        { name: 'UserName', type: 'string' },
-        { name: 'Message', type: 'string' },
-        { name: 'MG', type: 'string' },
-        { name: 'ManagementGroupName', type: 'string' },
-        { name: 'Type', type: 'string' },
-        { name: 'ResourceId', type: 'string' },
+      { name: 'Time of Day', type: 'string' },
+      { name: 'Process Name', type: 'string' },
+      { name: 'PID', type: 'int' },
+      { name: 'Operation', type: 'string' },
+      { name: 'Path', type: 'string' },
+      { name: 'Result', type: 'string' },
+      { name: 'Detail', type: 'string' },
       ],
     };
   },
+  mounted() {
+    this.loadCSVData();
+  },
   methods: {
-    getData() {
-      const url = 'https://api.loganalytics.io/v1/workspaces/39743c52-8e86-43b1-987e-cc5d848ecce7/query?timespan=PT30M';
-      const query = "Event | where Source == 'Microsoft-Windows-Sysmon'";
-  
-      axios
-        .post(url, { query }, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJjYTdmM2YwYi03ZDkxLTQ4MmMtOGUwOS1jNWQ4NDBkMGVhYzUiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8xNTA0MGEyNC1kYTlhLTRmYWYtODZlOS04YWU4NTJhMmU2ZjgvIiwiaWF0IjoxNjg0ODUwNDIyLCJuYmYiOjE2ODQ4NTA0MjIsImV4cCI6MTY4NDg1NTk3NCwiYWNyIjoiMSIsImFpbyI6IkFZUUFlLzhUQUFBQURBWXBjblNuNkNQYU1CNWV4OUMxZjZvMUtKb20xWTczc2FXbWw4bHgrN0REWEFmK2pKR2VlWTcvR25kdUdCRDZqR2dudit2dG1hTThnK2NPQ1FiUUdMMUZrUUpCd0xuSmJhODFYUm5IVkI1ZjVmQVhYYmd3cGhYNXZLWHJjUGRRTjlEdmlIaDBraHA5MzNIcUtRQ2JLOVVGYTJuYWxvcWhCbFhFTklxRXJmND0iLCJhbHRzZWNpZCI6IjE6bGl2ZS5jb206MDAwNjdGRkUyMzFBNkQ1QSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwaWQiOiI2ZTAwYjMxZi0wNmQ0LTRjOTMtOGIxNC1lMDhiNTY4YjRhMDQiLCJhcHBpZGFjciI6IjAiLCJlbWFpbCI6Ilh1Y2hlbnlhbmcwNkBob3RtYWlsLmNvbSIsImZhbWlseV9uYW1lIjoi5b6QIiwiZ2l2ZW5fbmFtZSI6Iui-sOa0iyIsImlkcCI6ImxpdmUuY29tIiwiaXBhZGRyIjoiMTE2Ljg4LjE5Ni4xNzIiLCJuYW1lIjoiWHVjaGVueWFuZzA2Iiwib2lkIjoiNjc0Y2I5MzAtMjMwOC00ZWJkLThjMDktNDljN2RjMzA1N2YyIiwicHVpZCI6IjEwMDMyMDAyNjVBNDIxNUMiLCJyaCI6IjAuQVVvQUpBb0VGWnJhcjAtRzZZcm9VcUxtLUFzX2Y4cVJmU3hJamduRjJFRFE2c1dKQU1ZLiIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6Ikw5Y3lkTFpyMVJvSW9YcVBvTmViSDlOOHFtQXMzbnlfMVp0OTJPbFdSemsiLCJ0aWQiOiIxNTA0MGEyNC1kYTlhLTRmYWYtODZlOS04YWU4NTJhMmU2ZjgiLCJ1bmlxdWVfbmFtZSI6ImxpdmUuY29tI1h1Y2hlbnlhbmcwNkBob3RtYWlsLmNvbSIsInV0aSI6IjlFN3RjVkNnMjB5UHIwX1ZyX2hDQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbIjEzYmQxYzcyLTZmNGEtNGRjZi05ODVmLTE4ZDNiODBmMjA4YSJdfQ.i5zUG9XSrTRQmO214q544ypVrjqSqaJYVh_kRC1BFZECrdGSNuhkFaFGwpDdysIZLI3YCzTCGdb-u9rQsb9KC71LFhXaglYRjPqKNgIOXuuw2TPjNIQH-bcXlgObyMZmg1LT6FCjFv95LSWidtUCTW4_HalPfdO7HceIQtiIR2zYNrRQmRGfSD-jnJ69tZ1S_Ev2focWyNIxupezjZoVVL6ry5mgW4VHFWz2lYlAofVtUYtXIu28sjWllGOW3IMQasoH85AElJZKUxpSZtxo7cghcKHYMvMDlnNAZlrL5mkMjzDh7C2TRq962_weUDR_tg-N_Uzm85tPC0HOlDuDwQ',
-          },
-        })
-        .then((response) => {
-          this.tableData = response.data.tables[0].rows.map((row) => {
-            const data = {};
-            row.forEach((value, index) => {
-              data[this.tableColumns[index].name] = value;
-            });
-            return data;
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    loadCSVData() {
+      const csvFilePath = 'static/svchost writing a file to a UNC path (T1105).csv'; // 替换为你的 CSV 文件路径
+      Papa.parse(csvFilePath, {
+        download: true,
+        header: true,
+        complete: (results) => {
+          this.tableData = results.data;
+        },
+      });
     },
+    // getData() {
+    //   const url = 'https://api.loganalytics.io/v1/workspaces/39743c52-8e86-43b1-987e-cc5d848ecce7/query?timespan=PT30M';
+    //   const query = "Event | where Source == 'Microsoft-Windows-Sysmon'";
+  
+    //   axios
+    //     .post(url, { query }, {
+    //       headers: {
+    //         'Accept': 'application/json',
+    //         'Content-Type': 'application/json',
+    //         'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJjYTdmM2YwYi03ZDkxLTQ4MmMtOGUwOS1jNWQ4NDBkMGVhYzUiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8xNTA0MGEyNC1kYTlhLTRmYWYtODZlOS04YWU4NTJhMmU2ZjgvIiwiaWF0IjoxNjg1ODc3NTUyLCJuYmYiOjE2ODU4Nzc1NTIsImV4cCI6MTY4NTg4MjUzOCwiYWNyIjoiMSIsImFpbyI6IkFZUUFlLzhUQUFBQTJDSWZEeGhRamtEWTU5bFJSdnp2SHZlQThwMmRaR09ncnFXdExlRWltcElDNGpKaU1aODVRVTF1aTFDb0RibGVzdDAvRUVkMGxJOW9VdmtPR00yVWVoTjl6VGRwZGtncUZPQTVhWU0zb3M5K2JCUFFuYzBBYU5rYnZLY1Y5T1VvUUJ2dnBBa1lrVlBYVnVvMGo2KzlOc3FnNDd6bzF5Z0RTZkhDek1NcnVCST0iLCJhbHRzZWNpZCI6IjE6bGl2ZS5jb206MDAwNjdGRkUyMzFBNkQ1QSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwaWQiOiI2ZTAwYjMxZi0wNmQ0LTRjOTMtOGIxNC1lMDhiNTY4YjRhMDQiLCJhcHBpZGFjciI6IjAiLCJlbWFpbCI6Ilh1Y2hlbnlhbmcwNkBob3RtYWlsLmNvbSIsImZhbWlseV9uYW1lIjoi5b6QIiwiZ2l2ZW5fbmFtZSI6Iui-sOa0iyIsImlkcCI6ImxpdmUuY29tIiwiaXBhZGRyIjoiMTAzLjI1Mi4yMDEuMjE0IiwibmFtZSI6Ilh1Y2hlbnlhbmcwNiIsIm9pZCI6IjY3NGNiOTMwLTIzMDgtNGViZC04YzA5LTQ5YzdkYzMwNTdmMiIsInB1aWQiOiIxMDAzMjAwMjY1QTQyMTVDIiwicmgiOiIwLkFVb0FKQW9FRlpyYXIwLUc2WXJvVXFMbS1Bc19mOHFSZlN4SWpnbkYyRURRNnNXSkFNWS4iLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJMOWN5ZExacjFSb0lvWHFQb05lYkg5TjhxbUFzM255XzFadDkyT2xXUnprIiwidGlkIjoiMTUwNDBhMjQtZGE5YS00ZmFmLTg2ZTktOGFlODUyYTJlNmY4IiwidW5pcXVlX25hbWUiOiJsaXZlLmNvbSNYdWNoZW55YW5nMDZAaG90bWFpbC5jb20iLCJ1dGkiOiJLZW9FbjI4ZHlVQzVLeThGWGFIV0FBIiwidmVyIjoiMS4wIiwid2lkcyI6WyIxM2JkMWM3Mi02ZjRhLTRkY2YtOTg1Zi0xOGQzYjgwZjIwOGEiXX0.DtpB5djNro8qxmYMujjZBcbIfBBzrgO8zdV6qTSVs2SkLDlR0i2_kpBsy6JoovwtaKk6NokAns3o0ExxadHSzyjU69iLOM4YYoKBhTv8ErbuhzmLPWki39Fj3jI-kHX1fooiGhxIKMZn--gFy3xwJMdlSUSg-VXCHd-RHF0Ajsd1sLva5YdbOW9emrK6rgCsuW6W_OOTsTbXnFWDeRXteJCTDXyFvY83AJ0-mGtgKzKHmgr4_Li7tMG2r2QNOg0oQUXmowyYTLuz_koD4ZtEiP3YFgcS3LaN9eNru45qLykC0ps4MDCXgAJ9JHgCtffGBqdfW17Es2Xm5C0fFeMgKQ',
+    //       },
+    //     })
+    //     .then((response) => {
+    //       this.tableData = response.data.tables[0].rows.map((row) => {
+    //         const data = {};
+    //         row.forEach((value, index) => {
+    //           data[this.tableColumns[index].name] = value;
+    //         });
+    //         return data;
+    //       });
+    //     })
+    //     .catch((error) => {
+    //       console.error(error);
+    //     });
+    // },
   },
 });
 </script>
