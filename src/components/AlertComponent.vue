@@ -58,6 +58,7 @@
   </script> -->
 
   <template>
+    <h1>Alert</h1>
     <div>
       <el-table :data="currentPageData" style="width: 100%">
         <el-table-column
@@ -93,8 +94,14 @@
       return {
         tableData: [],
         tableColumns: [
-          // 表格列配置
-        ],
+        { name: 'Time of Day', type: 'string' },
+        { name: 'Process Name', type: 'string' },
+        { name: 'PID', type: 'int' },
+        { name: 'Operation', type: 'string' },
+        { name: 'Path', type: 'string' },
+        { name: 'Result', type: 'string' },
+        { name: 'Detail', type: 'string' },
+        ],  
         currentPage: 1,
         pageSize: 10, // 每页显示的行数
       };

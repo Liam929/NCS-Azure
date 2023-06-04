@@ -18,7 +18,7 @@
       </nav>
     </header>
     <main>
-      <h1>{{ pages[currentPage].name }}</h1>
+      <!-- <h1>{{ pages[currentPage].name }}</h1> -->
       <!-- <p>{{ pages[currentPage].description }}</p> -->
       <!-- <div v-if="childPage">
         <h2>{{ childPage.name }}</h2>

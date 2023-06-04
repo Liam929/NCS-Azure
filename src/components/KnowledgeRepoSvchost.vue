@@ -1,4 +1,5 @@
 <template>
+  <h1>Svchost</h1>
     <div style="width: 100%">
     <!--静态html资源-->
       <div class="textCenter">

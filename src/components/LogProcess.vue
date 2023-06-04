@@ -109,8 +109,9 @@ export default defineComponent({
 </style> -->
 
 <template>
+  <h1>Selected Logs</h1>
   <div>
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="currentPageData" style="width: 100%">
       <el-table-column
         v-for="column in tableColumns"
         :key="column.name"
@@ -119,22 +120,26 @@ export default defineComponent({
         :min-width="200"
       />
     </el-table>
-    <!-- <el-button type="primary" @click="getData">Log Query</el-button> -->
+    <el-pagination
+      @current-change="handlePageChange"
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :total="tableData.length"
+      layout="prev, pager, next"
+    ></el-pagination>
   </div>
 </template>
-  
+    
 <script>
 import { defineComponent } from 'vue';
-// import axios from 'axios';
-// import { ElTable, ElTableColumn, ElButton } from 'element-plus';
-import { ElTable, ElTableColumn } from 'element-plus';
-import Papa from 'papaparse'; // 引入 PapaParse 库
-  
+import { ElTable, ElTableColumn, ElPagination } from 'element-plus';
+import Papa from 'papaparse';
+
 export default defineComponent({
   components: {
     ElTable,
     ElTableColumn,
-    // ElButton,
+    ElPagination,
   },
   data() {
     return {
@@ -147,15 +152,24 @@ export default defineComponent({
       { name: 'Path', type: 'string' },
       { name: 'Result', type: 'string' },
       { name: 'Detail', type: 'string' },
-      ],
+      ],  
+      currentPage: 1,
+      pageSize: 10, // 每页显示的行数
     };
+  },
+  computed: {
+    currentPageData() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.tableData.slice(startIndex, endIndex);
+    },
   },
   mounted() {
     this.loadCSVData();
   },
   methods: {
     loadCSVData() {
-      const csvFilePath = 'static/svchost writing a file to a UNC path (T1105).reduce.csv'; // 替换为你的 CSV 文件路径
+      const csvFilePath = 'static/svchost writing a file to a UNC path (T1105).reduce.csv';
       Papa.parse(csvFilePath, {
         download: true,
         header: true,
@@ -164,9 +178,13 @@ export default defineComponent({
         },
       });
     },
+    handlePageChange(currentPage) {
+      this.currentPage = currentPage;
+    },
   },
 });
 </script>
+
 
 <style scoped>
 .el-table th,
@@ -207,4 +225,3 @@ export default defineComponent({
   border-right: 1px solid #000;
 }
 </style>
-    
