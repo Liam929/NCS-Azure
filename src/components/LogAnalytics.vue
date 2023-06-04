@@ -1,5 +1,17 @@
 <template>
   <div>
+    <el-date-picker
+      v-model="startTime"
+      type="datetime"
+      placeholder="StartTime"
+      :picker-options="pickerOptions"
+    ></el-date-picker>
+    <el-date-picker
+      v-model="endTime"
+      type="datetime"
+      placeholder="EndTime"
+      :picker-options="pickerOptions"
+    ></el-date-picker>
     <el-table :data="tableData" style="width: 100%">
       <el-table-column
         v-for="column in tableColumns"
@@ -16,16 +28,19 @@
 <script>
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import { ElTable, ElTableColumn, ElButton } from 'element-plus';
+import { ElTable, ElTableColumn, ElButton, ElDatePicker } from 'element-plus';
   
 export default defineComponent({
   components: {
     ElTable,
     ElTableColumn,
     ElButton,
+    ElDatePicker,
   },
   data() {
     return {
+      startTime: null,
+      endTime: null,
       tableData: [],
       tableColumns: [
         { name: 'TenantId', type: 'string' },
@@ -54,7 +69,12 @@ export default defineComponent({
   },
   methods: {
     getData() {
-      const url = 'https://api.loganalytics.io/v1/workspaces/39743c52-8e86-43b1-987e-cc5d848ecce7/query?timespan=PT30M';
+      const startTimeISO = this.formatDateToISO(this.startTime);
+      const endTimeISO = this.formatDateToISO(this.endTime);
+      console.log('StartTime:', startTimeISO);
+      console.log('EndTime:', endTimeISO);
+      // const url = 'https://api.loganalytics.io/v1/workspaces/39743c52-8e86-43b1-987e-cc5d848ecce7/query?timespan=PT30M';
+      const url = 'https://api.loganalytics.io/v1/workspaces/39743c52-8e86-43b1-987e-cc5d848ecce7/query?timespan=2023-06-04T11:14:31.000Z/2023-06-04T11:43:14.623Z';
       const query = "Event | where Source == 'Microsoft-Windows-Sysmon'";
   
       axios
@@ -62,14 +82,17 @@ export default defineComponent({
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJjYTdmM2YwYi03ZDkxLTQ4MmMtOGUwOS1jNWQ4NDBkMGVhYzUiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8xNTA0MGEyNC1kYTlhLTRmYWYtODZlOS04YWU4NTJhMmU2ZjgvIiwiaWF0IjoxNjg0ODUwNDIyLCJuYmYiOjE2ODQ4NTA0MjIsImV4cCI6MTY4NDg1NTk3NCwiYWNyIjoiMSIsImFpbyI6IkFZUUFlLzhUQUFBQURBWXBjblNuNkNQYU1CNWV4OUMxZjZvMUtKb20xWTczc2FXbWw4bHgrN0REWEFmK2pKR2VlWTcvR25kdUdCRDZqR2dudit2dG1hTThnK2NPQ1FiUUdMMUZrUUpCd0xuSmJhODFYUm5IVkI1ZjVmQVhYYmd3cGhYNXZLWHJjUGRRTjlEdmlIaDBraHA5MzNIcUtRQ2JLOVVGYTJuYWxvcWhCbFhFTklxRXJmND0iLCJhbHRzZWNpZCI6IjE6bGl2ZS5jb206MDAwNjdGRkUyMzFBNkQ1QSIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwaWQiOiI2ZTAwYjMxZi0wNmQ0LTRjOTMtOGIxNC1lMDhiNTY4YjRhMDQiLCJhcHBpZGFjciI6IjAiLCJlbWFpbCI6Ilh1Y2hlbnlhbmcwNkBob3RtYWlsLmNvbSIsImZhbWlseV9uYW1lIjoi5b6QIiwiZ2l2ZW5fbmFtZSI6Iui-sOa0iyIsImlkcCI6ImxpdmUuY29tIiwiaXBhZGRyIjoiMTE2Ljg4LjE5Ni4xNzIiLCJuYW1lIjoiWHVjaGVueWFuZzA2Iiwib2lkIjoiNjc0Y2I5MzAtMjMwOC00ZWJkLThjMDktNDljN2RjMzA1N2YyIiwicHVpZCI6IjEwMDMyMDAyNjVBNDIxNUMiLCJyaCI6IjAuQVVvQUpBb0VGWnJhcjAtRzZZcm9VcUxtLUFzX2Y4cVJmU3hJamduRjJFRFE2c1dKQU1ZLiIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6Ikw5Y3lkTFpyMVJvSW9YcVBvTmViSDlOOHFtQXMzbnlfMVp0OTJPbFdSemsiLCJ0aWQiOiIxNTA0MGEyNC1kYTlhLTRmYWYtODZlOS04YWU4NTJhMmU2ZjgiLCJ1bmlxdWVfbmFtZSI6ImxpdmUuY29tI1h1Y2hlbnlhbmcwNkBob3RtYWlsLmNvbSIsInV0aSI6IjlFN3RjVkNnMjB5UHIwX1ZyX2hDQUEiLCJ2ZXIiOiIxLjAiLCJ3aWRzIjpbIjEzYmQxYzcyLTZmNGEtNGRjZi05ODVmLTE4ZDNiODBmMjA4YSJdfQ.i5zUG9XSrTRQmO214q544ypVrjqSqaJYVh_kRC1BFZECrdGSNuhkFaFGwpDdysIZLI3YCzTCGdb-u9rQsb9KC71LFhXaglYRjPqKNgIOXuuw2TPjNIQH-bcXlgObyMZmg1LT6FCjFv95LSWidtUCTW4_HalPfdO7HceIQtiIR2zYNrRQmRGfSD-jnJ69tZ1S_Ev2focWyNIxupezjZoVVL6ry5mgW4VHFWz2lYlAofVtUYtXIu28sjWllGOW3IMQasoH85AElJZKUxpSZtxo7cghcKHYMvMDlnNAZlrL5mkMjzDh7C2TRq962_weUDR_tg-N_Uzm85tPC0HOlDuDwQ',
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJjYTdmM2YwYi03ZDkxLTQ4MmMtOGUwOS1jNWQ4NDBkMGVhYzUiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC8xNTA0MGEyNC1kYTlhLTRmYWYtODZlOS04YWU4NTJhMmU2ZjgvIiwiaWF0IjoxNjg1ODc1NTI3LCJuYmYiOjE2ODU4NzU1MjcsImV4cCI6MTY4NTg4MDQ4MiwiYWNyIjoiMSIsImFpbyI6IkFZUUFlLzhUQUFBQUsxQzBmNUN6blI5YnRRL1Z6TENkaDM5dldUMStIOTE3a09Fa3RHNzBETmU0YWVVMUp3RzhIK0Y0M1ljajhlVmVoZlZXd2ZsUzYyZ0tFamxjMHlxckVsWndpUEpXbjZCRkQ2M3pxSnA4QlZzS0s0Tk1jUkpyaXNRdUR2UXpBQ1RnMFkxNG0zeklGWGE3Um93MGZ3NDFubHlBV3JHOTBVYmQrSEhNeXdJQ0Q0Yz0iLCJhbHRzZWNpZCI6IjE6bGl2ZS5jb206MDAwMzdGRkUwNkZBNEVEMCIsImFtciI6WyJwd2QiLCJtZmEiXSwiYXBwaWQiOiI2ZTAwYjMxZi0wNmQ0LTRjOTMtOGIxNC1lMDhiNTY4YjRhMDQiLCJhcHBpZGFjciI6IjAiLCJlbWFpbCI6IjMwNjk2OTY4NzJAcXEuY29tIiwiZmFtaWx5X25hbWUiOiJMaWFvIiwiZ2l2ZW5fbmFtZSI6IllpZmFuIiwiZ3JvdXBzIjpbIjIxNDkzY2UyLTIwY2ItNDc0OC05ZDk4LTViYTJkYmU4ZTFlMyJdLCJpZHAiOiJsaXZlLmNvbSIsImlwYWRkciI6IjE4NS40Mi4yMjAuMTc2IiwibmFtZSI6IllpZmFuIExpYW8iLCJvaWQiOiI0M2I2YWZmZi1mNWRjLTQzZjctYTE0MC0wZjFiZjNlMmU4NjIiLCJwdWlkIjoiMTAwMzIwMDI2NUEyQjFCOSIsInJoIjoiMC5BVW9BSkFvRUZacmFyMC1HNllyb1VxTG0tQXNfZjhxUmZTeElqZ25GMkVEUTZzV0pBTFUuIiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic3ViIjoiUFhDLTNicW9BbXVTMTVNYTFLdXpPWnhVNW5va2NjRGx1ZG1LWlo2RTNtMCIsInRpZCI6IjE1MDQwYTI0LWRhOWEtNGZhZi04NmU5LThhZTg1MmEyZTZmOCIsInVuaXF1ZV9uYW1lIjoibGl2ZS5jb20jMzA2OTY5Njg3MkBxcS5jb20iLCJ1dGkiOiJQc2RHVkFIOHBVZXRsM2hiX201NEFRIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiLCJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXX0.aCNx2LypFJr2wJGYgsyzr12Tj2J2R0o1exnTlhmN1ni9ZvBrD3_UyqSQ9Ny4LX64aAjcuDCUWBKA5vCLGu2ZCDFPI0GzuG5wGyglu_KghXb_v8OIAyWMWTfh8VTnc4K_yh9sSWyjK6qhRpyf2mY9-6XmyfndhkHs9nFLCM9s3D0HyLQAsxCCJ1JOXjq1Ig_trwbej2KPDrE3kwjPEFm8iNRCaE9JFfvegTZb0lpHuQunYjC4sBMyImA6eKD2n0shkf9OFBa7h2TLqjjKSzof3VQzsVw37OVtJs3rCznvJ_mzdTbG1WTdNvYY4_bCLP8lKVyRMqUm__8y8OHrAW6dAA',
           },
         })
         .then((response) => {
           this.tableData = response.data.tables[0].rows.map((row) => {
             const data = {};
             row.forEach((value, index) => {
-              data[this.tableColumns[index].name] = value;
+              const columnName = this.tableColumns[index].name;
+              if (columnName !== 'ParameterXml' && columnName !== 'EventData' && columnName !== 'RenderedDescription') {
+                data[columnName] = value;
+              }
             });
             return data;
           });
@@ -77,6 +100,16 @@ export default defineComponent({
         .catch((error) => {
           console.error(error);
         });
+    },
+    formatDateToISO(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
     },
   },
 });
@@ -120,4 +153,9 @@ export default defineComponent({
 .el-table .cell {
   border-right: 1px solid #000;
 }
+
+.table-row {
+  margin-bottom: 10px; /* 调整行之间的下边距 */
+}
+
 </style>

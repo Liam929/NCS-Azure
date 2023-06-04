@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <h1 class="title">NCS_Azure_UI</h1> <!-- 新添加的大标题元素 -->
     <header>
       <nav>
         <ul>
@@ -25,21 +26,24 @@
       <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
       <log-process v-else-if="currentPage === 1 && childPage.name === 'Selected Logs'"></log-process>
       <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Sub-page 1'"></log-graph>
+      <attack-graph v-if="currentPage === 5 && childPage.name === 'CTI to Graph'"></attack-graph>
     </main>
   </div>
-</template>
+</template>x
 <script>
 import { defineComponent } from 'vue';
 import LogAnalytics from './LogAnalytics.vue';
 import LogProcess from './LogProcess.vue';
 import AttackChain from './AttackChain.vue';
 import LogGraph from './LogGraph.vue';
+import AttackGraph from './AttackGraph.vue';
   export default defineComponent({
     components:{
       AttackChain,
       LogAnalytics,
       LogProcess,
       LogGraph,
+      AttackGraph,
     },
     data() {
       return {
@@ -110,6 +114,20 @@ import LogGraph from './LogGraph.vue';
               {
                 name: "Sub-page 2",
                 description: "This is another sub-page of Page 5"
+              }
+            ]
+          },
+          {
+            name: "Attack KG",
+            description: "This is the sixth page",
+            children: [
+              {
+                name: "CTI to Graph",
+                description: "This is a sub-page of Page 6"
+              },
+              {
+                name: "Graph to Chain",
+                description: "This is another sub-page of Page 6"
               }
             ]
           }
