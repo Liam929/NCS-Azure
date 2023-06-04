@@ -7,7 +7,10 @@
           <li v-for="(page, index) in pages" :key="index" :class="{ active: currentPage == index }" @click="currentPage = index">
             {{ page.name }}
             <ul v-if="page.children" class="sub-menu">
-              <li v-for="(child, childIndex) in page.children" :key="childIndex" @click="goToChildPage(child)">
+              <!-- <li v-for="(child, childIndex) in page.children" :key="childIndex" @click="goToChildPage(child)">
+              {{ child.name }}
+              </li> -->
+              <li v-for="(child, childIndex) in page.children" :key="childIndex" @click="child.name === 'Reduced Log Graph' ? openAlertGraphPage() : goToChildPage(child)">
               {{ child.name }}
               </li>
             </ul>
@@ -25,6 +28,10 @@
       <attack-chain v-if="currentPage === 0"></attack-chain>
       <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
       <log-process v-else-if="currentPage === 1 && childPage.name === 'Selected Logs'"></log-process>
+      <alert-component v-if="currentPage === 2"></alert-component>
+      <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph'"></log-graph>
+      <knowledge-repo-svchost v-if="currentPage === 4 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
+      <key-lines-test v-if="currentPage === 5"></key-lines-test>
       <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Sub-page 1'"></log-graph>
       <attack-graph v-if="currentPage === 5 && childPage.name === 'CTI to Graph'"></attack-graph>
     </main>
@@ -36,14 +43,18 @@ import LogAnalytics from './LogAnalytics.vue';
 import LogProcess from './LogProcess.vue';
 import AttackChain from './AttackChain.vue';
 import LogGraph from './LogGraph.vue';
-import AttackGraph from './AttackGraph.vue';
+import AlertComponent from './AlertComponent.vue'
+import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
+import KeyLinesTest from './KeyLinesTest.vue';
   export default defineComponent({
     components:{
       AttackChain,
       LogAnalytics,
       LogProcess,
       LogGraph,
-      AttackGraph,
+      AlertComponent,
+      KnowledgeRepoSvchost,
+      KeyLinesTest,
     },
     data() {
       return {
@@ -94,11 +105,11 @@ import AttackGraph from './AttackGraph.vue';
             description: "This is the fourth page",
             children: [
               {
-                name: "Sub-page 1",
+                name: "Reduced Log Graph",
                 description: "This is a sub-page of Page 4"
               },
               {
-                name: "Sub-page 2",
+                name: "Alert Graph",
                 description: "This is another sub-page of Page 4"
               }
             ]
@@ -108,7 +119,7 @@ import AttackGraph from './AttackGraph.vue';
             description: "This is the fifth page",
             children: [
               {
-                name: "Sub-page 1",
+                name: "Svchost",
                 description: "This is a sub-page of Page 5"
               },
               {
@@ -118,15 +129,15 @@ import AttackGraph from './AttackGraph.vue';
             ]
           },
           {
-            name: "Attack KG",
+            name: "KeyLines Test",
             description: "This is the sixth page",
             children: [
               {
-                name: "CTI to Graph",
+                name: "Sub-page 1",
                 description: "This is a sub-page of Page 6"
               },
               {
-                name: "Graph to Chain",
+                name: "Sub-page 2",
                 description: "This is another sub-page of Page 6"
               }
             ]
@@ -147,6 +158,10 @@ import AttackGraph from './AttackGraph.vue';
         }
         const index = parentPage.children.findIndex(p => p.name === childPage.name);
         this.currentPage = index;
+      },
+      openAlertGraphPage() {
+        const url = 'http://localhost:7474/browser/';
+        window.open(url, '_blank');
       }
     }
   });
