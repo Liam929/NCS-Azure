@@ -3,7 +3,10 @@
       <label for="ctiInput" class="input-label">{{ placeholderText }}</label>
       <input id="ctiInput" v-model="inputText" type="text" class="input-field">
       <button @click="generateImage">Convert to Graph</button>
-      <img v-if="generatedImage" :src="generatedImage" alt="The graph generated">
+      <!-- <img v-if="generatedImage" :src="generatedImage" alt="The graph generated"> -->
+      <div v-if="generatedImage" class="image-container">
+        <img :src="generatedImage" alt="The graph generated" class="graph-image">
+    </div>
     </div>
   </template>
   
@@ -24,7 +27,7 @@
         generateImage() {
         // 根据输入的文本生成图片的逻辑，你可以根据具体需求来实现
         // 生成的图片可以赋值给 generatedImage 属性，用于在页面上展示
-        this.generatedImage = 'image1.jpg';
+        this.generatedImage = 'https://github.com/JasonBourne1998/auto-testing-img/blob/main/image1.jpg?raw=true';
         }
     }
   };
@@ -48,6 +51,22 @@
         height: 300px;
         padding: 8px 4px; /* 调整内边距来偏移文本内容 */
         font-size: 16px;
+    }
+
+    .image-container {
+        position: relative;
+        width: 1000px; /* 调整图片容器的宽度 */
+        height: 1000px; /* 调整图片容器的高度 */
+    }
+
+    .graph-image {
+        position: absolute;
+        top: 50%; /* 调整图片的垂直位置 */
+        left: 50%; /* 调整图片的水平位置 */
+        transform: translate(-50%, -50%); /* 居中显示图片 */
+        width: 100%; /* 调整图片的宽度 */
+        height: 100%; /* 调整图片的高度 */
+        object-fit: contain; /* 根据容器比例自适应缩放图片 */
     }
     </style>
     
