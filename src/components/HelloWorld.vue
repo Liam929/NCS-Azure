@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    <h1 class="title">NCS_Azure_UI</h1> <!-- 新添加的大标题元素 -->
     <header>
       <nav>
         <ul>
@@ -34,7 +35,7 @@
       <attack-graph v-if="currentPage === 6 && childPage.name === 'CTI'"></attack-graph>
     </main>
   </div>
-</template>
+</template>x
 <script>
 import { defineComponent } from 'vue';
 import LogAnalytics from './LogAnalytics.vue';
