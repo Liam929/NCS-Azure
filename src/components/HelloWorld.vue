@@ -31,6 +31,7 @@
       <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph'"></log-graph>
       <knowledge-repo-svchost v-if="currentPage === 4 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
       <key-lines-test v-if="currentPage === 5"></key-lines-test>
+      <attack-graph v-if="currentPage === 6 && childPage.name === 'CTI'"></attack-graph>
     </main>
   </div>
 </template>
@@ -43,6 +44,7 @@ import LogGraph from './LogGraph.vue';
 import AlertComponent from './AlertComponent.vue'
 import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
 import KeyLinesTest from './KeyLinesTest.vue';
+import AttackGraph from './AttackGraph.vue';
   export default defineComponent({
     components:{
       AttackChain,
@@ -52,6 +54,7 @@ import KeyLinesTest from './KeyLinesTest.vue';
       AlertComponent,
       KnowledgeRepoSvchost,
       KeyLinesTest,
+      AttackGraph,
     },
     data() {
       return {
@@ -135,6 +138,20 @@ import KeyLinesTest from './KeyLinesTest.vue';
               },
               {
                 name: "Sub-page 2",
+                description: "This is another sub-page of Page 6"
+              }
+            ]
+          },
+          {
+            name: "Attack Graph",
+            description: "This is the seventh page",
+            children: [
+              {
+                name: "CTI",
+                description: "This is a sub-page of Page 6"
+              },
+              {
+                name: "Attack Chain",
                 description: "This is another sub-page of Page 6"
               }
             ]
