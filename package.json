@@ -13,12 +13,14 @@
     "dayjs": "^1.11.7",
     "echarts": "^5.4.2",
     "element-plus": "^2.3.6",
+    "flowchart.js": "^1.17.1",
     "keylines": "file:keylines-7.1.0-4340923457.tgz",
     "moment": "^2.29.4",
     "normalize.css": "^8.0.1",
     "papaparse": "^5.4.1",
     "vue": "^3.2.13",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "vue-router": "^4.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

@@ -1,6 +1,18 @@
 <!-- <template>
   <h1>Raw Logs</h1>
   <div>
+    <el-date-picker
+      v-model="startTime"
+      type="datetime"
+      placeholder="StartTime"
+      :picker-options="pickerOptions"
+    ></el-date-picker>
+    <el-date-picker
+      v-model="endTime"
+      type="datetime"
+      placeholder="EndTime"
+      :picker-options="pickerOptions"
+    ></el-date-picker>
     <el-table :data="currentPageData" style="width: 100%">
       <el-table-column
         v-for="column in tableColumns"
@@ -33,6 +45,8 @@ export default defineComponent({
   },
   data() {
     return {
+      startTime: null,
+      endTime: null,
       tableData: [],
       tableColumns: [
       { name: 'Time of Day', type: 'string' },
@@ -175,6 +189,16 @@ export default defineComponent({
     handlePageChange(currentPage) {
       this.currentPage = currentPage;
     },
+    // formatDateToISO(date) {
+    //   const year = date.getFullYear();
+    //   const month = String(date.getMonth() + 1).padStart(2, '0');
+    //   const day = String(date.getDate()).padStart(2, '0');
+    //   const hours = String(date.getHours()).padStart(2, '0');
+    //   const minutes = String(date.getMinutes()).padStart(2, '0');
+    //   const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    //   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.000Z`;
+    // },
   },
 });
 </script>
