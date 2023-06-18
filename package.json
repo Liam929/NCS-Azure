@@ -17,7 +17,8 @@
     "moment": "^2.29.4",
     "normalize.css": "^8.0.1",
     "papaparse": "^5.4.1",
-    "vue": "^3.2.13"
+    "vue": "^3.2.13",
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

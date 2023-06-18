@@ -4,7 +4,9 @@
 </template>
   
 <script>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import KlChart from './vue/Chart.vue';
+import { edges, nodes } from './data';
   
 export default {
     name: 'app',

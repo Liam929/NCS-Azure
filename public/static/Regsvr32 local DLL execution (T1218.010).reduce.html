@@ -1,0 +1,969 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 1000px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 1000px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="965203758418793306">965203758418793306</option>
+                                
+                                    <option value="3344699754472640843">3344699754472640843</option>
+                                
+                                    <option value="7591014879207786439">7591014879207786439</option>
+                                
+                                    <option value="-925607813033125280">-925607813033125280</option>
+                                
+                                    <option value="3038877491995294407">3038877491995294407</option>
+                                
+                                    <option value="-560244580997925324">-560244580997925324</option>
+                                
+                                    <option value="-8734390664961055790">-8734390664961055790</option>
+                                
+                                    <option value="-4605953326444833689">-4605953326444833689</option>
+                                
+                                    <option value="-5534561459411097990">-5534561459411097990</option>
+                                
+                                    <option value="-514739238598894858">-514739238598894858</option>
+                                
+                                    <option value="-473309318575304624">-473309318575304624</option>
+                                
+                                    <option value="-2425125876239549080">-2425125876239549080</option>
+                                
+                                    <option value="5966912799775900958">5966912799775900958</option>
+                                
+                                    <option value="3057478728958242814">3057478728958242814</option>
+                                
+                                    <option value="5925197267507772331">5925197267507772331</option>
+                                
+                                    <option value="-551881476557756935">-551881476557756935</option>
+                                
+                                    <option value="3187345856781891274">3187345856781891274</option>
+                                
+                                    <option value="6697190031899687557">6697190031899687557</option>
+                                
+                                    <option value="-5033356624477514216">-5033356624477514216</option>
+                                
+                                    <option value="8629307657688214384">8629307657688214384</option>
+                                
+                                    <option value="-8166587600501894367">-8166587600501894367</option>
+                                
+                                    <option value="8547204826197019699">8547204826197019699</option>
+                                
+                                    <option value="-4906947331789738523">-4906947331789738523</option>
+                                
+                                    <option value="923220709370581717">923220709370581717</option>
+                                
+                                    <option value="5750937065464578863">5750937065464578863</option>
+                                
+                                    <option value="-8544769614180698960">-8544769614180698960</option>
+                                
+                                    <option value="7493165352174852478">7493165352174852478</option>
+                                
+                                    <option value="-4447572763720009404">-4447572763720009404</option>
+                                
+                                    <option value="-7840926183131935319">-7840926183131935319</option>
+                                
+                                    <option value="3253679230529505220">3253679230529505220</option>
+                                
+                                    <option value="8077347607870844332">8077347607870844332</option>
+                                
+                                    <option value="8133613830642318044">8133613830642318044</option>
+                                
+                                    <option value="124318574256104497">124318574256104497</option>
+                                
+                                    <option value="-985225157727591079">-985225157727591079</option>
+                                
+                                    <option value="-1630165296712232699">-1630165296712232699</option>
+                                
+                                    <option value="1712271969932157344">1712271969932157344</option>
+                                
+                                    <option value="2035094619648499775">2035094619648499775</option>
+                                
+                                    <option value="3276534673058151456">3276534673058151456</option>
+                                
+                                    <option value="760025046073327420">760025046073327420</option>
+                                
+                                    <option value="-4436944490273929721">-4436944490273929721</option>
+                                
+                                    <option value="4358041827115808057">4358041827115808057</option>
+                                
+                                    <option value="-2733157981798177660">-2733157981798177660</option>
+                                
+                                    <option value="-7816186720914190222">-7816186720914190222</option>
+                                
+                                    <option value="4874687525835404232">4874687525835404232</option>
+                                
+                                    <option value="8875139341739188033">8875139341739188033</option>
+                                
+                                    <option value="-8627714868833665322">-8627714868833665322</option>
+                                
+                                    <option value="8836338529313600562">8836338529313600562</option>
+                                
+                                    <option value="5834141725510056234">5834141725510056234</option>
+                                
+                                    <option value="-3879638866231892383">-3879638866231892383</option>
+                                
+                                    <option value="7600521976903594219">7600521976903594219</option>
+                                
+                                    <option value="-6705152220697855699">-6705152220697855699</option>
+                                
+                                    <option value="8042236425033971126">8042236425033971126</option>
+                                
+                                    <option value="4603397884041304380">4603397884041304380</option>
+                                
+                                    <option value="4842648202977411591">4842648202977411591</option>
+                                
+                                    <option value="4357400143363831686">4357400143363831686</option>
+                                
+                                    <option value="-4778594773321664274">-4778594773321664274</option>
+                                
+                                    <option value="4700107926274836889">4700107926274836889</option>
+                                
+                                    <option value="-652904378392027991">-652904378392027991</option>
+                                
+                                    <option value="5598421670616300516">5598421670616300516</option>
+                                
+                                    <option value="7214724915576693815">7214724915576693815</option>
+                                
+                                    <option value="949097219190603221">949097219190603221</option>
+                                
+                                    <option value="-4678382072882023971">-4678382072882023971</option>
+                                
+                                    <option value="-106249798202827853">-106249798202827853</option>
+                                
+                                    <option value="7062993625286477646">7062993625286477646</option>
+                                
+                                    <option value="6095839275864651255">6095839275864651255</option>
+                                
+                                    <option value="-8771960723477925955">-8771960723477925955</option>
+                                
+                                    <option value="-6456094136241489063">-6456094136241489063</option>
+                                
+                                    <option value="25961296303056210">25961296303056210</option>
+                                
+                                    <option value="-8388434274298511773">-8388434274298511773</option>
+                                
+                                    <option value="-4802115007549110775">-4802115007549110775</option>
+                                
+                                    <option value="-371520070491075825">-371520070491075825</option>
+                                
+                                    <option value="-5488843195143366976">-5488843195143366976</option>
+                                
+                                    <option value="-6682802498158408755">-6682802498158408755</option>
+                                
+                                    <option value="1403620162661758249">1403620162661758249</option>
+                                
+                                    <option value="7458404600633372751">7458404600633372751</option>
+                                
+                                    <option value="2266547015921015589">2266547015921015589</option>
+                                
+                                    <option value="4404814977254757738">4404814977254757738</option>
+                                
+                                    <option value="763932948082997050">763932948082997050</option>
+                                
+                                    <option value="1838494460556684372">1838494460556684372</option>
+                                
+                                    <option value="-1244080768874085130">-1244080768874085130</option>
+                                
+                                    <option value="5626605990891166252">5626605990891166252</option>
+                                
+                                    <option value="-6742160423723450182">-6742160423723450182</option>
+                                
+                                    <option value="-3206308510320335179">-3206308510320335179</option>
+                                
+                                    <option value="8372394259236917304">8372394259236917304</option>
+                                
+                                    <option value="5575619544719470196">5575619544719470196</option>
+                                
+                                    <option value="7100986811544691754">7100986811544691754</option>
+                                
+                                    <option value="3161078955347599187">3161078955347599187</option>
+                                
+                                    <option value="-5975944171406555861">-5975944171406555861</option>
+                                
+                                    <option value="137557466903963277">137557466903963277</option>
+                                
+                                    <option value="-7896734752143881776">-7896734752143881776</option>
+                                
+                                    <option value="-138403939282378369">-138403939282378369</option>
+                                
+                                    <option value="8548503405056668260">8548503405056668260</option>
+                                
+                                    <option value="-3916804470277485445">-3916804470277485445</option>
+                                
+                                    <option value="3663517924342225244">3663517924342225244</option>
+                                
+                                    <option value="574453740422766759">574453740422766759</option>
+                                
+                                    <option value="9184521250170398261">9184521250170398261</option>
+                                
+                                    <option value="-4411644441432627592">-4411644441432627592</option>
+                                
+                                    <option value="5980502810424274871">5980502810424274871</option>
+                                
+                                    <option value="2527578827151602461">2527578827151602461</option>
+                                
+                                    <option value="9208380540383703265">9208380540383703265</option>
+                                
+                                    <option value="8405187242457445607">8405187242457445607</option>
+                                
+                                    <option value="5628939029852705219">5628939029852705219</option>
+                                
+                                    <option value="6205094983543979498">6205094983543979498</option>
+                                
+                                    <option value="-132825538366697767">-132825538366697767</option>
+                                
+                                    <option value="-5505264439216916573">-5505264439216916573</option>
+                                
+                                    <option value="-4226001984113950202">-4226001984113950202</option>
+                                
+                                    <option value="-7422188060098747525">-7422188060098747525</option>
+                                
+                                    <option value="-1892938698183878680">-1892938698183878680</option>
+                                
+                                    <option value="4741952412355798847">4741952412355798847</option>
+                                
+                                    <option value="8336493080667694559">8336493080667694559</option>
+                                
+                                    <option value="4636490834431520909">4636490834431520909</option>
+                                
+                                    <option value="-314559280472188511">-314559280472188511</option>
+                                
+                                    <option value="6581071416748364585">6581071416748364585</option>
+                                
+                                    <option value="4880660321792922907">4880660321792922907</option>
+                                
+                                    <option value="4334915127523252572">4334915127523252572</option>
+                                
+                                    <option value="414823641055485488">414823641055485488</option>
+                                
+                                    <option value="2038450682994234664">2038450682994234664</option>
+                                
+                                    <option value="-8858686969269877799">-8858686969269877799</option>
+                                
+                                    <option value="3680741907800187181">3680741907800187181</option>
+                                
+                                    <option value="9207795924714228314">9207795924714228314</option>
+                                
+                                    <option value="-1342334962969592920">-1342334962969592920</option>
+                                
+                                    <option value="-3009625684638352244">-3009625684638352244</option>
+                                
+                                    <option value="9000709599651084580">9000709599651084580</option>
+                                
+                                    <option value="-3557511006197637070">-3557511006197637070</option>
+                                
+                                    <option value="-2385263721725438012">-2385263721725438012</option>
+                                
+                                    <option value="4619016842439547556">4619016842439547556</option>
+                                
+                                    <option value="-8560612658534495009">-8560612658534495009</option>
+                                
+                                    <option value="-4738094982708348658">-4738094982708348658</option>
+                                
+                                    <option value="3091829555106465699">3091829555106465699</option>
+                                
+                                    <option value="-9036486552820350218">-9036486552820350218</option>
+                                
+                                    <option value="241152286230715091">241152286230715091</option>
+                                
+                                    <option value="7927037604344813539">7927037604344813539</option>
+                                
+                                    <option value="-5010474962945025169">-5010474962945025169</option>
+                                
+                                    <option value="-5177002532879075507">-5177002532879075507</option>
+                                
+                                    <option value="6753648578495765633">6753648578495765633</option>
+                                
+                                    <option value="-4335601630035101120">-4335601630035101120</option>
+                                
+                                    <option value="-1426045966103515154">-1426045966103515154</option>
+                                
+                                    <option value="-8746266424699236821">-8746266424699236821</option>
+                                
+                                    <option value="1605991534013775275">1605991534013775275</option>
+                                
+                                    <option value="-3579220812072664691">-3579220812072664691</option>
+                                
+                                    <option value="-2883173467422962400">-2883173467422962400</option>
+                                
+                                    <option value="8078132834606492791">8078132834606492791</option>
+                                
+                                    <option value="-7358835171943660830">-7358835171943660830</option>
+                                
+                                    <option value="-1729192061569996400">-1729192061569996400</option>
+                                
+                                    <option value="3103934004221370527">3103934004221370527</option>
+                                
+                                    <option value="6921260821534441377">6921260821534441377</option>
+                                
+                                    <option value="1953147015720636806">1953147015720636806</option>
+                                
+                                    <option value="5997986303431111187">5997986303431111187</option>
+                                
+                                    <option value="-5791799310906264111">-5791799310906264111</option>
+                                
+                                    <option value="-3123866427018703070">-3123866427018703070</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": 965203758418793306, "label": "splunkd.exe_4592", "shape": "box"}, {"color": "red", "id": 3344699754472640843, "label": "bafdf3_AllTheThingsx86.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7591014879207786439, "label": "cmd.exe_5756", "shape": "box"}, {"color": "#97c2fc", "id": -925607813033125280, "label": "CMD.EXE-CD245F9E.pf", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3038877491995294407, "label": "azureuser", "shape": "ellipse"}, {"color": "#97c2fc", "id": -560244580997925324, "label": "None", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8734390664961055790, "label": "Users", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4605953326444833689, "label": "SortDefault.nls", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5534561459411097990, "label": "SysWOW64", "shape": "ellipse"}, {"color": "red", "id": -514739238598894858, "label": "regsvr32.exe", "shape": "ellipse"}, {"color": "#97c2fc", "id": -473309318575304624, "label": "sysmain.sdb", "shape": "ellipse"}, {"color": "#97c2fc", "id": -2425125876239549080, "label": "apphelp.dll", "shape": "ellipse"}, {"color": "red", "id": 5966912799775900958, "label": "C:\\Windows\\syswow64\\regsvr32.exe_9652", "shape": "box"}, {"color": "#97c2fc", "id": 3057478728958242814, "label": "REGSVR32.EXE-3290E8FC.pf", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5925197267507772331, "label": "Windows", "shape": "ellipse"}, {"color": "#97c2fc", "id": -551881476557756935, "label": "apphelp.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3187345856781891274, "label": "ntdll.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 6697190031899687557, "label": "kernel32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5033356624477514216, "label": "KernelBase.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8629307657688214384, "label": "AcLayers.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8166587600501894367, "label": "mpr.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8547204826197019699, "label": "sfc.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4906947331789738523, "label": "winspool.drv", "shape": "ellipse"}, {"color": "#97c2fc", "id": 923220709370581717, "label": "sfc_os.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5750937065464578863, "label": "msvcrt.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8544769614180698960, "label": "win32u.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7493165352174852478, "label": "ucrtbase.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4447572763720009404, "label": "msvcp_win.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -7840926183131935319, "label": "gdi32full.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3253679230529505220, "label": "gdi32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8077347607870844332, "label": "user32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8133613830642318044, "label": "shell32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 124318574256104497, "label": "shlwapi.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -985225157727591079, "label": "rpcrt4.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -1630165296712232699, "label": "combase.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 1712271969932157344, "label": "oleaut32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 2035094619648499775, "label": "cfgmgr32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3276534673058151456, "label": "bcrypt.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 760025046073327420, "label": "setupapi.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4436944490273929721, "label": "imm32.dll", "shape": "ellipse"}, {"color": "red", "id": 4358041827115808057, "label": "regsvr32.exe.mui", "shape": "ellipse"}, {"color": "#97c2fc", "id": -2733157981798177660, "label": "ole32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -7816186720914190222, "label": "kernel.appcore.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4874687525835404232, "label": "bcryptprimitives.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8875139341739188033, "label": "uxtheme.dll", "shape": "ellipse"}, {"color": "red", "id": -8627714868833665322, "label": "bafdf3_AllTheThingsx86.dll", "shape": "ellipse"}, {"color": "red", "id": 8836338529313600562, "label": "bafdf3_AllTheThingsx86.dll", "shape": "ellipse"}, {"color": "red", "id": 5834141725510056234, "label": "bafdf3_AllTheThingsx86.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -3879638866231892383, "label": "mscoree.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7600521976903594219, "label": "sechost.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -6705152220697855699, "label": "advapi32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8042236425033971126, "label": "v4.0.30319", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4603397884041304380, "label": "mscoreei.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4842648202977411591, "label": "Framework", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4357400143363831686, "label": "clr.dll", "shape": "ellipse"}, {"color": "red", "id": -4778594773321664274, "label": "bafdf3_AllTheThingsx86.dll.config", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4700107926274836889, "label": "version.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -652904378392027991, "label": "vcruntime140_clr0400.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5598421670616300516, "label": "ucrtbase_clr0400.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7214724915576693815, "label": "machine.config", "shape": "ellipse"}, {"color": "#97c2fc", "id": 949097219190603221, "label": "mscorlib.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4678382072882023971, "label": "mscorlib", "shape": "ellipse"}, {"color": "#97c2fc", "id": -106249798202827853, "label": "mscorlib.ni.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7062993625286477646, "label": "mscorlib.ni.dll.aux", "shape": "ellipse"}, {"color": "#97c2fc", "id": 6095839275864651255, "label": "clrjit.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8771960723477925955, "label": "System.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -6456094136241489063, "label": "System", "shape": "ellipse"}, {"color": "#97c2fc", "id": 25961296303056210, "label": "System.ni.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8388434274298511773, "label": "System.ni.dll.aux", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4802115007549110775, "label": "System.Configuration.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -371520070491075825, "label": "System.XML.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5488843195143366976, "label": "SHCore.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -6682802498158408755, "label": "windows.storage.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 1403620162661758249, "label": "wldp.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7458404600633372751, "label": "propsys.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 2266547015921015589, "label": "clbcatq.dll", "shape": "ellipse"}, {"color": "red", "id": 4404814977254757738, "label": "calc.exe", "shape": "ellipse"}, {"color": "#97c2fc", "id": 763932948082997050, "label": "Caches", "shape": "ellipse"}, {"color": "#97c2fc", "id": 1838494460556684372, "label": "cversions.1.db", "shape": "ellipse"}, {"color": "#97c2fc", "id": -1244080768874085130, "label": "{AFBF9F1A-8EE8-4C77-AF34-C647E37CA0D9}.1.ver0x0000000000000002.db", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5626605990891166252, "label": "propsys.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -6742160423723450182, "label": "propsys.dll.mui", "shape": "ellipse"}, {"color": "#97c2fc", "id": -3206308510320335179, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8372394259236917304, "label": "profapi.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5575619544719470196, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7100986811544691754, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3161078955347599187, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5975944171406555861, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": 137557466903963277, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": -7896734752143881776, "label": "desktop.ini", "shape": "ellipse"}, {"color": "#97c2fc", "id": -138403939282378369, "label": "edputil.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8548503405056668260, "label": "Windows.StateRepositoryPS.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -3916804470277485445, "label": "urlmon.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3663517924342225244, "label": "iertutil.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 574453740422766759, "label": "srvcli.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 9184521250170398261, "label": "netutils.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4411644441432627592, "label": "sspicli.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5980502810424274871, "label": "INetCache", "shape": "ellipse"}, {"color": "#97c2fc", "id": 2527578827151602461, "label": "INetCookies", "shape": "ellipse"}, {"color": "#97c2fc", "id": 9208380540383703265, "label": "virtdisk.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8405187242457445607, "label": "fltLib.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5628939029852705219, "label": "WinTypes.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 6205094983543979498, "label": "AppResolver.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -132825538366697767, "label": "BCP47Langs.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5505264439216916573, "label": "slc.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4226001984113950202, "label": "userenv.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -7422188060098747525, "label": "sppc.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -1892938698183878680, "label": "OneCoreCommonProxyStub.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4741952412355798847, "label": "OneCoreUAPCommonProxyStub.dll", "shape": "ellipse"}, {"color": "red", "id": 8336493080667694559, "label": "C:\\Windows\\SysWOW64\\calc.exe_3244", "shape": "box"}, {"color": "red", "id": 4636490834431520909, "label": "regsvr32.exe", "shape": "ellipse"}, {"color": "#97c2fc", "id": -314559280472188511, "label": "Sysmon64.exe_3492", "shape": "box"}, {"color": "#97c2fc", "id": 6581071416748364585, "label": "CALC.EXE-C8734E4D.pf", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4880660321792922907, "label": "ieframe.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4334915127523252572, "label": "ieframe.dll.mui", "shape": "ellipse"}, {"color": "#97c2fc", "id": 414823641055485488, "label": "netapi32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 2038450682994234664, "label": "winhttp.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8858686969269877799, "label": "wkscli.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3680741907800187181, "label": "x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.1110_none_a8625c1886757984", "shape": "ellipse"}, {"color": "#97c2fc", "id": 9207795924714228314, "label": "comctl32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -1342334962969592920, "label": "WindowsShell.Manifest", "shape": "ellipse"}, {"color": "#97c2fc", "id": -3009625684638352244, "label": "shell32.dll.mui", "shape": "ellipse"}, {"color": "#97c2fc", "id": 9000709599651084580, "label": "windows.storage.dll.mui", "shape": "ellipse"}, {"color": "#97c2fc", "id": -3557511006197637070, "label": "secur32.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -2385263721725438012, "label": "mlang.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 4619016842439547556, "label": "wininet.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8560612658534495009, "label": "Local", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4738094982708348658, "label": "Windows", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3091829555106465699, "label": "Content.IE5", "shape": "ellipse"}, {"color": "#97c2fc", "id": -9036486552820350218, "label": "IE", "shape": "ellipse"}, {"color": "#97c2fc", "id": 241152286230715091, "label": "History", "shape": "ellipse"}, {"color": "#97c2fc", "id": 7927037604344813539, "label": "History.IE5", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5010474962945025169, "label": "policymanager.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5177002532879075507, "label": "msvcp110_win.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 6753648578495765633, "label": "twinui.appcore.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -4335601630035101120, "label": "execmodelproxy.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -1426045966103515154, "label": "MrmCoreR.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -8746266424699236821, "label": "Windows.StateRepositoryCore.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 1605991534013775275, "label": "AppXDeploymentClient.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -3579220812072664691, "label": "S-1-5-21-3812273841-921784874-4059084093-500-MergedResources-1.pri", "shape": "ellipse"}, {"color": "#97c2fc", "id": -2883173467422962400, "label": "BCP47mrm.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 8078132834606492791, "label": "Windows.UI.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -7358835171943660830, "label": "WindowManagementAPI.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -1729192061569996400, "label": "TextInputFramework.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 3103934004221370527, "label": "InputHost.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 6921260821534441377, "label": "twinapi.appcore.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 1953147015720636806, "label": "CoreMessaging.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": 5997986303431111187, "label": "CoreUIComponents.dll", "shape": "ellipse"}, {"color": "#97c2fc", "id": -5791799310906264111, "label": "ntmarta.dll", "shape": "ellipse"}, {"color": "red", "id": -3123866427018703070, "label": "regsvr32.exe_5824", "shape": "box"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": 965203758418793306, "label": "Wrote", "to": 3344699754472640843}, {"arrows": "to", "from": 965203758418793306, "label": "Wrote", "to": 3344699754472640843}, {"arrows": "to", "from": 965203758418793306, "label": "Accessed", "to": 3344699754472640843}, {"arrows": "to", "from": 965203758418793306, "label": "Accessed", "to": 3344699754472640843}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -925607813033125280}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -925607813033125280}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -925607813033125280}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": 3038877491995294407}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": 3038877491995294407}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -560244580997925324}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -560244580997925324}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -8734390664961055790}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -8734390664961055790}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -4605953326444833689}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -4605953326444833689}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -5534561459411097990}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -5534561459411097990}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -514739238598894858}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -514739238598894858}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -473309318575304624}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -473309318575304624}, {"arrows": "to", "from": 7591014879207786439, "label": "Wrote", "to": -2425125876239549080}, {"arrows": "to", "from": 7591014879207786439, "label": "Accessed", "to": -2425125876239549080}, {"arrows": "to", "from": 7591014879207786439, "label": "Fork", "to": 5966912799775900958}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3057478728958242814}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3057478728958242814}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3057478728958242814}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5925197267507772331}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5925197267507772331}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3038877491995294407}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3038877491995294407}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -551881476557756935}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -551881476557756935}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -514739238598894858}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -514739238598894858}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3187345856781891274}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3187345856781891274}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 6697190031899687557}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 6697190031899687557}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -5033356624477514216}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -5033356624477514216}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -473309318575304624}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -473309318575304624}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8629307657688214384}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8629307657688214384}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -8166587600501894367}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -8166587600501894367}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8547204826197019699}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8547204826197019699}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4906947331789738523}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4906947331789738523}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 923220709370581717}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 923220709370581717}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5750937065464578863}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5750937065464578863}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -8544769614180698960}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -8544769614180698960}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 7493165352174852478}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7493165352174852478}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4447572763720009404}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4447572763720009404}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -7840926183131935319}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -7840926183131935319}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3253679230529505220}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3253679230529505220}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8077347607870844332}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8077347607870844332}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8133613830642318044}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8133613830642318044}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 124318574256104497}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 124318574256104497}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -985225157727591079}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -985225157727591079}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -1630165296712232699}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -1630165296712232699}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 1712271969932157344}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 1712271969932157344}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 2035094619648499775}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 2035094619648499775}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3276534673058151456}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3276534673058151456}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 760025046073327420}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 760025046073327420}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4436944490273929721}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4436944490273929721}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4358041827115808057}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4358041827115808057}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -2733157981798177660}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -2733157981798177660}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -7816186720914190222}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -7816186720914190222}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4874687525835404232}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4874687525835404232}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8875139341739188033}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8875139341739188033}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -8627714868833665322}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8836338529313600562}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5834141725510056234}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3344699754472640843}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3344699754472640843}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -3879638866231892383}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -3879638866231892383}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 7600521976903594219}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7600521976903594219}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -6705152220697855699}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -6705152220697855699}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8042236425033971126}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8042236425033971126}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4603397884041304380}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4603397884041304380}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4842648202977411591}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4842648202977411591}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4357400143363831686}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4357400143363831686}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4778594773321664274}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4700107926274836889}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4700107926274836889}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -652904378392027991}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -652904378392027991}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5598421670616300516}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5598421670616300516}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 7214724915576693815}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7214724915576693815}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7214724915576693815}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4605953326444833689}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4605953326444833689}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 949097219190603221}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 949097219190603221}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4678382072882023971}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4678382072882023971}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -106249798202827853}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -106249798202827853}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 7062993625286477646}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7062993625286477646}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7062993625286477646}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 6095839275864651255}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 6095839275864651255}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -8771960723477925955}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -8771960723477925955}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -6456094136241489063}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -6456094136241489063}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 25961296303056210}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 25961296303056210}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -8388434274298511773}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -8388434274298511773}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -8388434274298511773}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4802115007549110775}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4802115007549110775}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -371520070491075825}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -371520070491075825}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -5488843195143366976}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -5488843195143366976}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -6682802498158408755}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -6682802498158408755}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 1403620162661758249}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 1403620162661758249}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 7458404600633372751}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7458404600633372751}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 2266547015921015589}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 2266547015921015589}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4404814977254757738}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4404814977254757738}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -560244580997925324}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -560244580997925324}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 763932948082997050}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 763932948082997050}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 1838494460556684372}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 1838494460556684372}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -1244080768874085130}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -1244080768874085130}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -5534561459411097990}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -5534561459411097990}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5626605990891166252}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5626605990891166252}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -6742160423723450182}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -6742160423723450182}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -3206308510320335179}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -3206308510320335179}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -3206308510320335179}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8372394259236917304}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8372394259236917304}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5575619544719470196}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5575619544719470196}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5575619544719470196}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 7100986811544691754}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7100986811544691754}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 7100986811544691754}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3161078955347599187}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3161078955347599187}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3161078955347599187}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -5975944171406555861}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -5975944171406555861}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -5975944171406555861}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 137557466903963277}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 137557466903963277}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 137557466903963277}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -7896734752143881776}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -7896734752143881776}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -7896734752143881776}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -138403939282378369}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -138403939282378369}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8548503405056668260}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8548503405056668260}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -3916804470277485445}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -3916804470277485445}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 3663517924342225244}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 3663517924342225244}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 574453740422766759}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 574453740422766759}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 9184521250170398261}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 9184521250170398261}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4411644441432627592}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4411644441432627592}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5980502810424274871}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5980502810424274871}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 2527578827151602461}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 2527578827151602461}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 9208380540383703265}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 9208380540383703265}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 8405187242457445607}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 8405187242457445607}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 5628939029852705219}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 5628939029852705219}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 6205094983543979498}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 6205094983543979498}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -132825538366697767}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -132825538366697767}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -5505264439216916573}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -5505264439216916573}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -4226001984113950202}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -4226001984113950202}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -7422188060098747525}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -7422188060098747525}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": -1892938698183878680}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": -1892938698183878680}, {"arrows": "to", "from": 5966912799775900958, "label": "Wrote", "to": 4741952412355798847}, {"arrows": "to", "from": 5966912799775900958, "label": "Accessed", "to": 4741952412355798847}, {"arrows": "to", "from": 5966912799775900958, "label": "Fork", "to": 8336493080667694559}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 6581071416748364585}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 6581071416748364585}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 6581071416748364585}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 5925197267507772331}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 5925197267507772331}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 3038877491995294407}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 3038877491995294407}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -4436944490273929721}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -4436944490273929721}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -4605953326444833689}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -4605953326444833689}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -6682802498158408755}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -6682802498158408755}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 1403620162661758249}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 1403620162661758249}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 1712271969932157344}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 1712271969932157344}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -7816186720914190222}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -7816186720914190222}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 8875139341739188033}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 8875139341739188033}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 7458404600633372751}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 7458404600633372751}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -3916804470277485445}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -3916804470277485445}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 3663517924342225244}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 3663517924342225244}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 574453740422766759}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 574453740422766759}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 9184521250170398261}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 9184521250170398261}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -5534561459411097990}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -5534561459411097990}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 4880660321792922907}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 4880660321792922907}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 4334915127523252572}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 4334915127523252572}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 414823641055485488}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 414823641055485488}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 4700107926274836889}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 4700107926274836889}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -4226001984113950202}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -4226001984113950202}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 2038450682994234664}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 2038450682994234664}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -8858686969269877799}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -8858686969269877799}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 3680741907800187181}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 3680741907800187181}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 9207795924714228314}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 9207795924714228314}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -1342334962969592920}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -1342334962969592920}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -3009625684638352244}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -3009625684638352244}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 8548503405056668260}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 8548503405056668260}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 9000709599651084580}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 9000709599651084580}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 5628939029852705219}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 5628939029852705219}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -138403939282378369}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -138403939282378369}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -3557511006197637070}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -3557511006197637070}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -4411644441432627592}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -4411644441432627592}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -2385263721725438012}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -2385263721725438012}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 4619016842439547556}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 4619016842439547556}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 8372394259236917304}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 8372394259236917304}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -8560612658534495009}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -8560612658534495009}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 5980502810424274871}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 5980502810424274871}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -4738094982708348658}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -4738094982708348658}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 3091829555106465699}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 3091829555106465699}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -9036486552820350218}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -9036486552820350218}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 2527578827151602461}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 2527578827151602461}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 241152286230715091}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 241152286230715091}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 7927037604344813539}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 7927037604344813539}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -5010474962945025169}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -5010474962945025169}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -5177002532879075507}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -5177002532879075507}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 6753648578495765633}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 6753648578495765633}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 4741952412355798847}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 4741952412355798847}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -4335601630035101120}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -4335601630035101120}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -1426045966103515154}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -1426045966103515154}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -8746266424699236821}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -8746266424699236821}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 1605991534013775275}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 1605991534013775275}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -3579220812072664691}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -3579220812072664691}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -2883173467422962400}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -2883173467422962400}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 8078132834606492791}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 8078132834606492791}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -7358835171943660830}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -7358835171943660830}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -1729192061569996400}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -1729192061569996400}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 3103934004221370527}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 3103934004221370527}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 6921260821534441377}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 6921260821534441377}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 1953147015720636806}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 1953147015720636806}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": 5997986303431111187}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": 5997986303431111187}, {"arrows": "to", "from": 8336493080667694559, "label": "Wrote", "to": -5791799310906264111}, {"arrows": "to", "from": 8336493080667694559, "label": "Accessed", "to": -5791799310906264111}, {"arrows": "to", "from": -314559280472188511, "label": "Wrote", "to": 3344699754472640843}, {"arrows": "to", "from": -314559280472188511, "label": "Accessed", "to": 3344699754472640843}, {"arrows": "to", "from": -314559280472188511, "label": "Accessed", "to": 3344699754472640843}, {"arrows": "to", "from": -3123866427018703070, "label": "Wrote", "to": -8627714868833665322}, {"arrows": "to", "from": -3123866427018703070, "label": "Wrote", "to": 8836338529313600562}, {"arrows": "to", "from": -3123866427018703070, "label": "Wrote", "to": 5834141725510056234}, {"arrows": "to", "from": -3123866427018703070, "label": "Wrote", "to": 3344699754472640843}, {"arrows": "to", "from": -3123866427018703070, "label": "Wrote", "to": 3344699754472640843}, {"arrows": "to", "from": -3123866427018703070, "label": "Accessed", "to": 3344699754472640843}, {"arrows": "to", "from": -3123866427018703070, "label": "Wrote", "to": -4778594773321664274}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

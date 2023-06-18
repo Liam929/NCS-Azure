@@ -29,9 +29,10 @@
       <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
       <log-process v-else-if="currentPage === 1 && childPage.name === 'Selected Logs'"></log-process>
       <alert-component v-if="currentPage === 2"></alert-component>
-      <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph'"></log-graph>
+      <alert-graph v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph(T1105)'"></alert-graph>
+      <alert-graph2 v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph(T1036)'"></alert-graph2>
       <knowledge-repo-svchost v-if="currentPage === 4 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
-      <key-lines-test v-if="currentPage === 5"></key-lines-test>
+      <keylines-graph v-if="currentPage === 5"></keylines-graph>
       <attack-graph v-if="currentPage === 6 && childPage.name === 'CTI'"></attack-graph>
     </main>
   </div>
@@ -41,21 +42,25 @@ import { defineComponent } from 'vue';
 import LogAnalytics from './LogAnalytics.vue';
 import LogProcess from './LogProcess.vue';
 import AttackChain from './AttackChain.vue';
-import LogGraph from './LogGraph.vue';
+import AlertGraph from './AlertGraph.vue';
+import AlertGraph2 from './AlertGraph2.vue';
 import AlertComponent from './AlertComponent.vue'
 import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
-import KeyLinesTest from './KeyLinesTest.vue';
+// import KeyLinesTest from './KeyLinesTest.vue';
 import AttackGraph from './AttackGraph.vue';
+import KeylinesGraph from './KeylinesGraph.vue';
   export default defineComponent({
     components:{
       AttackChain,
       LogAnalytics,
       LogProcess,
-      LogGraph,
+      AlertGraph,
+      AlertGraph2,
       AlertComponent,
       KnowledgeRepoSvchost,
-      KeyLinesTest,
+      // KeyLinesTest,
       AttackGraph,
+      KeylinesGraph,
     },
     data() {
       return {
@@ -110,7 +115,11 @@ import AttackGraph from './AttackGraph.vue';
                 description: "This is a sub-page of Page 4"
               },
               {
-                name: "Alert Graph",
+                name: "Alert Graph(T1105)",
+                description: "This is another sub-page of Page 4"
+              },
+              {
+                name: "Alert Graph(T1036)",
                 description: "This is another sub-page of Page 4"
               }
             ]
@@ -124,9 +133,41 @@ import AttackGraph from './AttackGraph.vue';
                 description: "This is a sub-page of Page 5"
               },
               {
-                name: "Sub-page 2",
+                name: "Rundll32",
                 description: "This is another sub-page of Page 5"
-              }
+              },
+              {
+                name: "Regsvr32",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "Explorer",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "cmd",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "Powershell",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "sc",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "lsass",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "Service",
+                description: "This is another sub-page of Page 5"
+              },
+              {
+                name: "wmic",
+                description: "This is another sub-page of Page 5"
+              },
             ]
           },
           {
@@ -222,6 +263,7 @@ nav li.active {
   background-color: #2684ff;
   margin-top: 10px;
   padding: 10px;
+  z-index: 1000;
 }
   
 nav li:hover .sub-menu {

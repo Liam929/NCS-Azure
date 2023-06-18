@@ -1,5 +1,5 @@
 <template>
-  <h1>Attack Chains</h1>
+  <h1>Attack Chains of APT29 Day1</h1>
   <div class="attack-chain">
     <div class="attack-step" v-for="(step, index) in attackData" :key="index" @click="showDetails(index)">
       <div class="attack-info">
@@ -31,9 +31,15 @@ export default {
       selectedStep: null,
       attackData: [
         { name: 'Step 1:Initial Breach', time: '2023-05-03 12:00:00', result: 'success', details: { command: 'Double click 3aka3.doc ', description: 'The scenario begins with an initial breach, where a legitimate user clicks (T1204) an executable payload (screensaver executable) masquerading as a benign word document (T1036). Once executed, the payload creates a C2 connection over port 1234 (T1065) using the RC4 cryptographic cipher ' } },
-        { name: 'Step 2:T1105', time: '2023-05-03 12:30:00', result: 'timeout', details: { command: 'Command 2', description: 'Description 2' } },
-        { name: 'Step 3', time: '2023-05-03 13:00:00', result: 'failed', details: { command: 'Command 3', description: 'Description 3' } },
-        // ...
+        { name: 'Step 2:Rapid Collection and Exfiltration', time: '2023-05-03 12:30:00', result: 'timeout', details: { command: 'Command 2', description: 'Description 2' } },
+        { name: 'Step 3:Deploy Stealth Toolkit', time: '2023-05-03 13:00:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 4:Defense Evasion and Discovery', time: '2023-05-03 13:30:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 5:Persistence', time: '2023-05-03 14:00:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 6:Credential Access', time: '2023-05-03 14:30:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 7:Collection and Exfiltration', time: '2023-05-03 15:00:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 8:Lateral Movement', time: '2023-05-03 15:30:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 9:Collection', time: '2023-05-03 15:30:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 10:Persistence Execution', time: '2023-05-03 16:00:00', result: 'success', details: { command: 'Command 3', description: 'Description 3' } },
       ],
     };
   },
