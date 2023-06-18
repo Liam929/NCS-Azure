@@ -4,14 +4,14 @@
     <header>
       <nav>
         <ul>
-          <li v-for="(page, index) in pages" :key="index" :class="{ active: currentPage == index }" @click="currentPage = index">
+          <li @click="goToOverview" :class="{ active: currentPage === 0 }">
+            {{ pages[0].name }}
+          </li>
+          <li v-for="(page, index) in pages.slice(1)" :key="index + 1" :class="{ active: currentPage == index + 1 }" @click="currentPage = index + 1">
             {{ page.name }}
             <ul v-if="page.children" class="sub-menu">
-              <!-- <li v-for="(child, childIndex) in page.children" :key="childIndex" @click="goToChildPage(child)">
-              {{ child.name }}
-              </li> -->
               <li v-for="(child, childIndex) in page.children" :key="childIndex" @click="child.name === 'Reduced Log Graph' ? openAlertGraphPage() : goToChildPage(child)">
-              {{ child.name }}
+                {{ child.name }}
               </li>
             </ul>
           </li>
@@ -25,17 +25,18 @@
         <h2>{{ childPage.name }}</h2>
         <p>{{ childPage.description }}</p>
       </div> -->
-      <attack-chain v-if="currentPage === 0"></attack-chain>
-      <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
-      <log-process v-else-if="currentPage === 1 && childPage.name === 'Selected Logs'"></log-process>
-      <alert-component v-if="currentPage === 2"></alert-component>
-      <log-graph v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph'"></log-graph>
-      <knowledge-repo-svchost v-if="currentPage === 4 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
-      <key-lines-test v-if="currentPage === 5"></key-lines-test>
-      <attack-graph v-if="currentPage === 6 && childPage.name === 'CTI'"></attack-graph>
+      <overview-component v-if="currentPage === 0 && (!childPage || childPage.name === 'Framework')"></overview-component>
+      <attack-chain v-if="currentPage === 1"></attack-chain>
+      <log-analytics v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></log-analytics>
+      <log-process v-else-if="currentPage === 2 && childPage.name === 'Selected Logs'"></log-process>
+      <alert-component v-if="currentPage === 3"></alert-component>
+      <log-graph v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph'"></log-graph>
+      <knowledge-repo-svchost v-if="currentPage === 5 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
+      <key-lines-test v-if="currentPage === 6"></key-lines-test>
+      <attack-graph v-if="currentPage === 7 && childPage.name === 'CTI'"></attack-graph>
     </main>
   </div>
-</template>x
+</template>
 <script>
 import { defineComponent } from 'vue';
 import LogAnalytics from './LogAnalytics.vue';
@@ -46,8 +47,10 @@ import AlertComponent from './AlertComponent.vue'
 import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
 import KeyLinesTest from './KeyLinesTest.vue';
 import AttackGraph from './AttackGraph.vue';
+import OverviewComponent from './FlowOverview.vue';
   export default defineComponent({
     components:{
+      OverviewComponent,
       AttackChain,
       LogAnalytics,
       LogProcess,
@@ -63,6 +66,16 @@ import AttackGraph from './AttackGraph.vue';
         currentPage: 0,
         childPage: null,
         pages: [
+          {
+            name: "Overview",
+            description: "This is the Overview page",
+            children: [
+              {
+                name: "Framework",
+                description: "This is a FrameWork Page"
+              }
+            ]
+          },
           {
             name: "Attack TTPs",
             description: "This is the first page",
@@ -150,10 +163,6 @@ import AttackGraph from './AttackGraph.vue';
               {
                 name: "CTI",
                 description: "This is a sub-page of Page 6"
-              },
-              {
-                name: "Attack Chain",
-                description: "This is another sub-page of Page 6"
               }
             ]
           }
@@ -162,17 +171,29 @@ import AttackGraph from './AttackGraph.vue';
     },
     methods: {
       goToPage(page) {
-        this.childPage = null;
+        this.childPage = null; // 设置为 null
         const index = this.pages.findIndex(p => p.name === page.name);
+        if (this.currentPage === index) {
+          return; // 如果已经处于当前页面，则不执行任何操作
+        }
         this.currentPage = index;
       },
       goToChildPage(childPage) {
         const parentPage = this.pages[this.currentPage];
         if (parentPage.children) {
-          this.childPage = childPage;
+          const childPageIndex = parentPage.children.findIndex(p => p.name === childPage.name);
+          if (childPageIndex !== -1) {
+            this.currentPage = childPageIndex;
+            this.childPage = parentPage.children[childPageIndex];
+          }
         }
-        const index = parentPage.children.findIndex(p => p.name === childPage.name);
-        this.currentPage = index;
+      },
+      goToOverview() {
+        if (this.currentPage === 0) {
+          return; // 如果已经处于初始流程图页面，则不执行任何操作
+        }
+        this.currentPage = 0; // 将当前页面重置为初始流程图页面
+        this.childPage = null;
       },
       openAlertGraphPage() {
         const url = 'http://localhost:7474/browser/';

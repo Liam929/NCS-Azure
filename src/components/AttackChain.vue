@@ -30,9 +30,9 @@ export default {
     return {
       selectedStep: null,
       attackData: [
-        { name: 'Step 1:Initial Breach', time: '2023-05-03 12:00:00', result: 'success', details: { command: 'Double click 3aka3.doc ', description: 'The scenario begins with an initial breach, where a legitimate user clicks (T1204) an executable payload (screensaver executable) masquerading as a benign word document (T1036). Once executed, the payload creates a C2 connection over port 1234 (T1065) using the RC4 cryptographic cipher ' } },
+        { name: 'Step 1:T1102', time: '2023-05-03 12:00:00', result: 'success', details: { command: 'Double click 3aka3.doc ', description: 'The scenario begins with an initial breach, where a legitimate user clicks (T1204) an executable payload (screensaver executable) masquerading as a benign word document (T1036). Once executed, the payload creates a C2 connection over port 1234 (T1065) using the RC4 cryptographic cipher ' } },
         { name: 'Step 2:T1105', time: '2023-05-03 12:30:00', result: 'timeout', details: { command: 'Command 2', description: 'Description 2' } },
-        { name: 'Step 3', time: '2023-05-03 13:00:00', result: 'failed', details: { command: 'Command 3', description: 'Description 3' } },
+        { name: 'Step 3:T1203', time: '2023-05-03 13:00:00', result: 'failed', details: { command: 'Command 3', description: 'Description 3' } },
         // ...
       ],
     };
