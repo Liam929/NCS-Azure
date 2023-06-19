@@ -4,7 +4,7 @@ import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 import App from './App.vue';
 import Knowledg from './components/KnowledgeRepoSvchost.vue';
-import LogGraph from './components/LogGraph.vue';
+import LogGraph from './components/AlertGraph.vue';
 import RawLog from './components/LogAnalytics.vue'
 import SelectedLog from './components/LogProcess.vue'
 import AlertGraph from './components/AlertComponent.vue'

@@ -26,15 +26,16 @@
         <p>{{ childPage.description }}</p>
       </div> -->
       <overview-component v-if="currentPage === 0 && (!childPage || childPage.name === 'Framework')"></overview-component>
-      <attack-chain v-if="currentPage === 0"></attack-chain>
-      <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
-      <log-process v-else-if="currentPage === 1 && childPage.name === 'Selected Logs'"></log-process>
-      <alert-component v-if="currentPage === 2"></alert-component>
-      <alert-graph v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph(T1105)'"></alert-graph>
-      <alert-graph2 v-if="currentPage === 3 && childPage && childPage.name === 'Alert Graph(T1036)'"></alert-graph2>
-      <knowledge-repo-svchost v-if="currentPage === 4 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
-      <keylines-graph v-if="currentPage === 5"></keylines-graph>
-      <attack-graph v-if="currentPage === 6 && childPage.name === 'CTI'"></attack-graph>
+      <attack-chain v-if="currentPage === 1 && childPage.name === 'Attack Chain'"></attack-chain>
+      <attack-ttp v-if="currentPage === 1 && childPage.name === 'TTP Graph'"></attack-ttp>
+      <log-analytics v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></log-analytics>
+      <log-process v-else-if="currentPage === 3 && childPage.name === 'Selected Logs'"></log-process>
+      <alert-component v-if="currentPage === 3"></alert-component>
+      <alert-graph v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1105)'"></alert-graph>
+      <alert-graph2 v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1036)'"></alert-graph2>
+      <knowledge-repo-svchost v-if="currentPage === 5 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
+      <keylines-graph v-if="currentPage === 6"></keylines-graph>
+      <attack-graph v-if="currentPage === 7 && childPage.name === 'CTI'"></attack-graph>
     </main>
   </div>
 </template>
@@ -43,11 +44,11 @@ import { defineComponent } from 'vue';
 import LogAnalytics from './LogAnalytics.vue';
 import LogProcess from './LogProcess.vue';
 import AttackChain from './AttackChain.vue';
+import AttackTtp from './AttackTtp.vue';
 import AlertGraph from './AlertGraph.vue';
 import AlertGraph2 from './AlertGraph2.vue';
 import AlertComponent from './AlertComponent.vue'
 import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
-// import KeyLinesTest from './KeyLinesTest.vue';
 import AttackGraph from './AttackGraph.vue';
 import KeylinesGraph from './KeylinesGraph.vue';
 import OverviewComponent from './FlowOverview.vue';
@@ -55,13 +56,13 @@ import OverviewComponent from './FlowOverview.vue';
     components:{
       OverviewComponent,
       AttackChain,
+      AttackTtp,
       LogAnalytics,
       LogProcess,
       AlertGraph,
       AlertGraph2,
       AlertComponent,
       KnowledgeRepoSvchost,
-      // KeyLinesTest,
       AttackGraph,
       KeylinesGraph,
     },
@@ -86,11 +87,11 @@ import OverviewComponent from './FlowOverview.vue';
             description: "This is the first page",
             children: [
               {
-                name: "Sub-page 1",
+                name: "Attack Chain",
                 description: "This is a sub-page of Page 1"
               },
               {
-                name: "Sub-page 2",
+                name: "TTP Graph",
                 description: "This is another sub-page of Page 1"
               }
             ]
