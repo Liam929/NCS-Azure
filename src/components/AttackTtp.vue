@@ -91,6 +91,14 @@
         // 这里使用示例逻辑来检查 'Reconnaissance' 列是否为 'Gather Victim Host Information'
         if (column === 'Reconnaissance' && value === 'Gather Victim Host Information') {
           return true;
+        } else if (column === 'Resource Development' && value === 'Compromise Accounts') {
+          return true;
+        } else if (column === 'Initial Access' && value === 'Phishing') {
+          return true;
+        } else if (column === 'Execution' && value === 'Deploy Container') {
+          return true;
+        } else if (column === 'Persistence' && value === 'Create Account') {
+          return true;
         }
         return false;
       },
