@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <h1 class="title">NCS_Azure_UI</h1> <!-- 新添加的大标题元素 -->
+    <!-- <h1 class="title">NCS_Azure_UI</h1> -->
     <header>
       <nav>
         <ul>
@@ -26,16 +26,21 @@
         <p>{{ childPage.description }}</p>
       </div> -->
       <overview-component v-if="currentPage === 0 && (!childPage || childPage.name === 'Framework')"></overview-component>
-      <attack-chain v-if="currentPage === 1 && childPage.name === 'Attack Chain'"></attack-chain>
-      <attack-ttp v-if="currentPage === 1 && childPage.name === 'TTP Graph'"></attack-ttp>
+      <attack-chain v-if="currentPage === 1"></attack-chain>
+      <!-- <attack-ttp v-if="currentPage === 1 && childPage.name === 'TTP Graph'"></attack-ttp> -->
       <log-analytics v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></log-analytics>
-      <log-process v-else-if="currentPage === 3 && childPage.name === 'Selected Logs'"></log-process>
-      <alert-component v-if="currentPage === 3"></alert-component>
-      <alert-graph v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1105)'"></alert-graph>
-      <alert-graph2 v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1036)'"></alert-graph2>
-      <knowledge-repo-svchost v-if="currentPage === 5 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
-      <keylines-graph v-if="currentPage === 6"></keylines-graph>
-      <attack-graph v-if="currentPage === 7 && childPage.name === 'CTI'"></attack-graph>
+      <system-edrlogs v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></system-edrlogs>
+      <log-process v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></log-process>
+      <suri-cate v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></suri-cate>
+      <power-shell v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></power-shell>
+      <t1105-logs v-if="currentPage === 2 && childPage.name === 'Selected Logs'"></t1105-logs>
+      <filtered-logs v-if="currentPage === 2 && childPage.name === 'Selected Logs'"></filtered-logs>
+      <!-- <alert-component v-if="currentPage === 3"></alert-component> -->
+      <!-- <alert-graph v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1105)'"></alert-graph>
+      <alert-graph2 v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1036)'"></alert-graph2> -->
+      <knowledge-repo-svchost v-if="currentPage === 3 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
+      <!-- <keylines-graph v-if="currentPage === 6"></keylines-graph> -->
+      <d3-graph v-if="currentPage === 4"></d3-graph>
     </main>
   </div>
 </template>
@@ -44,27 +49,39 @@ import { defineComponent } from 'vue';
 import LogAnalytics from './LogAnalytics.vue';
 import LogProcess from './LogProcess.vue';
 import AttackChain from './AttackChain.vue';
-import AttackTtp from './AttackTtp.vue';
-import AlertGraph from './AlertGraph.vue';
-import AlertGraph2 from './AlertGraph2.vue';
-import AlertComponent from './AlertComponent.vue'
+// import AttackTtp from './AttackTtp.vue';
+// import AlertGraph from './AlertGraph.vue';
+// import AlertGraph2 from './AlertGraph2.vue';
+// import AlertComponent from './AlertComponent.vue'
 import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
-import AttackGraph from './AttackGraph.vue';
-import KeylinesGraph from './KeylinesGraph.vue';
+// import AttackGraph from './AttackGraph.vue';
+// import KeylinesGraph from './KeylinesGraph.vue';
 import OverviewComponent from './FlowOverview.vue';
+import D3Graph from './D3Graph.vue';
+import SuriCate from './SuriCate.vue';
+import T1105Logs from './T1105Logs.vue';
+import SystemEdrlogs from './SysmonEdrlogs.vue';
+import PowerShell from './PowerShell.vue';
+import FilteredLogs from './FilteredLogs.vue';
   export default defineComponent({
     components:{
       OverviewComponent,
       AttackChain,
-      AttackTtp,
+      // AttackTtp,
       LogAnalytics,
       LogProcess,
-      AlertGraph,
-      AlertGraph2,
-      AlertComponent,
+      // AlertGraph,
+      // AlertGraph2,
+      // AlertComponent,
       KnowledgeRepoSvchost,
-      AttackGraph,
-      KeylinesGraph,
+      // AttackGraph,
+      // KeylinesGraph,
+      D3Graph,
+      SuriCate,
+      T1105Logs,
+      SystemEdrlogs,
+      PowerShell,
+      FilteredLogs
     },
     data() {
       return {
@@ -85,16 +102,16 @@ import OverviewComponent from './FlowOverview.vue';
           {
             name: "Attack TTPs",
             description: "This is the first page",
-            children: [
-              {
-                name: "Attack Chain",
-                description: "This is a sub-page of Page 1"
-              },
-              {
-                name: "TTP Graph",
-                description: "This is another sub-page of Page 1"
-              }
-            ]
+            // children: [
+            //   {
+            //     name: "Attack Chain",
+            //     description: "This is a sub-page of Page 1"
+            //   },
+            //   {
+            //     name: "TTP Graph",
+            //     description: "This is another sub-page of Page 1"
+            //   }
+            // ]
           },
           {
             name: "Microsoft Sentinel Logs",
@@ -110,34 +127,34 @@ import OverviewComponent from './FlowOverview.vue';
               }
             ]
           },
-          {
-            name: "Alert",
-            description: "This is the third page",
-            children: [
-              {
-                name: "Sub-page 1",
-                description: "This is a sub-page of Page 3"
-              }
-            ]
-          },
-          {
-            name: "Log Graph",
-            description: "This is the fourth page",
-            children: [
-              {
-                name: "Reduced Log Graph",
-                description: "This is a sub-page of Page 4"
-              },
-              {
-                name: "Alert Graph(T1105)",
-                description: "This is another sub-page of Page 4"
-              },
-              {
-                name: "Alert Graph(T1036)",
-                description: "This is another sub-page of Page 4"
-              }
-            ]
-          },
+          // {
+          //   name: "Alert",
+          //   description: "This is the third page",
+          //   children: [
+          //     {
+          //       name: "Sub-page 1",
+          //       description: "This is a sub-page of Page 3"
+          //     }
+          //   ]
+          // },
+          // {
+          //   name: "Log Graph",
+          //   description: "This is the fourth page",
+          //   children: [
+          //     {
+          //       name: "Reduced Log Graph",
+          //       description: "This is a sub-page of Page 4"
+          //     },
+          //     {
+          //       name: "Alert Graph(T1105)",
+          //       description: "This is another sub-page of Page 4"
+          //     },
+          //     {
+          //       name: "Alert Graph(T1036)",
+          //       description: "This is another sub-page of Page 4"
+          //     }
+          //   ]
+          // },
           {
             name: "Knowledge Repo",
             description: "This is the fifth page",
@@ -184,29 +201,23 @@ import OverviewComponent from './FlowOverview.vue';
               },
             ]
           },
+          // {
+          //   name: "KeyLines Test",
+          //   description: "This is the sixth page",
+          //   children: [
+          //     {
+          //       name: "Sub-page 1",
+          //       description: "This is a sub-page of Page 6"
+          //     },
+          //     {
+          //       name: "Sub-page 2",
+          //       description: "This is another sub-page of Page 6"
+          //     }
+          //   ]
+          // },
           {
-            name: "KeyLines Test",
-            description: "This is the sixth page",
-            children: [
-              {
-                name: "Sub-page 1",
-                description: "This is a sub-page of Page 6"
-              },
-              {
-                name: "Sub-page 2",
-                description: "This is another sub-page of Page 6"
-              }
-            ]
-          },
-          {
-            name: "Attack Graph",
+            name: "Threat Detection",
             description: "This is the seventh page",
-            children: [
-              {
-                name: "CTI",
-                description: "This is a sub-page of Page 6"
-              }
-            ]
           }
         ]
       };

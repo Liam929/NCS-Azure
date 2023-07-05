@@ -8,6 +8,8 @@ import LogGraph from './components/AlertGraph.vue';
 import RawLog from './components/LogAnalytics.vue'
 import SelectedLog from './components/LogProcess.vue'
 import AlertGraph from './components/AlertComponent.vue'
+// import '@fortawesome/fontawesome-free/css/all.css'
+
 
 const routes = [
     { path: '/operation-1', component: RawLog },
