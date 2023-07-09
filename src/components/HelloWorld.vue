@@ -25,63 +25,41 @@
         <h2>{{ childPage.name }}</h2>
         <p>{{ childPage.description }}</p>
       </div> -->
-      <overview-component v-if="currentPage === 0 && (!childPage || childPage.name === 'Framework')"></overview-component>
-      <attack-chain v-if="currentPage === 1"></attack-chain>
-      <!-- <attack-ttp v-if="currentPage === 1 && childPage.name === 'TTP Graph'"></attack-ttp> -->
-      <log-analytics v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></log-analytics>
-      <system-edrlogs v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></system-edrlogs>
-      <log-process v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></log-process>
-      <suri-cate v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></suri-cate>
-      <power-shell v-if="currentPage === 2 && childPage.name === 'Raw Logs'"></power-shell>
-      <t1105-logs v-if="currentPage === 2 && childPage.name === 'Selected Logs'"></t1105-logs>
-      <filtered-logs v-if="currentPage === 2 && childPage.name === 'Selected Logs'"></filtered-logs>
-      <!-- <alert-component v-if="currentPage === 3"></alert-component> -->
-      <!-- <alert-graph v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1105)'"></alert-graph>
-      <alert-graph2 v-if="currentPage === 4 && childPage && childPage.name === 'Alert Graph(T1036)'"></alert-graph2> -->
-      <knowledge-repo-svchost v-if="currentPage === 3 && childPage.name === 'Svchost'"></knowledge-repo-svchost>
-      <!-- <keylines-graph v-if="currentPage === 6"></keylines-graph> -->
-      <d3-graph v-if="currentPage === 4"></d3-graph>
+      <attack-chain v-if="currentPage === 0"></attack-chain>
+      <log-analytics v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></log-analytics>
+      <system-edrlogs v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></system-edrlogs>
+      <e-d-r-alerts v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></e-d-r-alerts>
+      <i-d-s-alerts v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></i-d-s-alerts>
+      <power-shell-logs v-if="currentPage === 1 && childPage.name === 'Raw Logs'"></power-shell-logs>
+      <compressed-system-logs v-if="currentPage === 1 && childPage.name === 'Compressed Logs'"></compressed-system-logs>
+      <compressed-i-d-s-alerts v-if="currentPage === 1 && childPage.name === 'Compressed Logs'"></compressed-i-d-s-alerts>
+      <!-- <knowledge-repo-svchost v-if="currentPage === 2 && childPage.name === 'Svchost'"></knowledge-repo-svchost> -->
+      <d3-graph v-if="currentPage === 2"></d3-graph>
     </main>
   </div>
 </template>
 <script>
 import { defineComponent } from 'vue';
-import LogAnalytics from './LogAnalytics.vue';
-import LogProcess from './LogProcess.vue';
+import LogAnalytics from './LogAnalytics.vue'
 import AttackChain from './AttackChain.vue';
-// import AttackTtp from './AttackTtp.vue';
-// import AlertGraph from './AlertGraph.vue';
-// import AlertGraph2 from './AlertGraph2.vue';
-// import AlertComponent from './AlertComponent.vue'
-import KnowledgeRepoSvchost from './KnowledgeRepoSvchost.vue';
-// import AttackGraph from './AttackGraph.vue';
-// import KeylinesGraph from './KeylinesGraph.vue';
-import OverviewComponent from './FlowOverview.vue';
 import D3Graph from './D3Graph.vue';
-import SuriCate from './SuriCate.vue';
-import T1105Logs from './T1105Logs.vue';
+import IDSAlerts from './IDSAlerts.vue';
+import EDRAlerts from './EDRAlerts.vue'
+import PowerShellLogs from './PowerShellLogs.vue'
+import CompressedIDSAlerts from './CompressedIDSAlerts.vue'
+import CompressedSystemLogs from './CompressedSystemLogs.vue';
 import SystemEdrlogs from './SysmonEdrlogs.vue';
-import PowerShell from './PowerShell.vue';
-import FilteredLogs from './FilteredLogs.vue';
   export default defineComponent({
     components:{
-      OverviewComponent,
       AttackChain,
-      // AttackTtp,
       LogAnalytics,
-      LogProcess,
-      // AlertGraph,
-      // AlertGraph2,
-      // AlertComponent,
-      KnowledgeRepoSvchost,
-      // AttackGraph,
-      // KeylinesGraph,
+      EDRAlerts,
+      IDSAlerts,
       D3Graph,
-      SuriCate,
-      T1105Logs,
+      CompressedSystemLogs,
       SystemEdrlogs,
-      PowerShell,
-      FilteredLogs
+      PowerShellLogs,
+      CompressedIDSAlerts,
     },
     data() {
       return {
@@ -90,31 +68,11 @@ import FilteredLogs from './FilteredLogs.vue';
         childPage: null,
         pages: [
           {
-            name: "Overview",
-            description: "This is the Overview page",
-            children: [
-              {
-                name: "Framework",
-                description: "This is a FrameWork Page"
-              }
-            ]
-          },
-          {
             name: "Attack TTPs",
             description: "This is the first page",
-            // children: [
-            //   {
-            //     name: "Attack Chain",
-            //     description: "This is a sub-page of Page 1"
-            //   },
-            //   {
-            //     name: "TTP Graph",
-            //     description: "This is another sub-page of Page 1"
-            //   }
-            // ]
           },
           {
-            name: "Microsoft Sentinel Logs",
+            name: "Security Logs",
             description: "This is the second page",
             children: [
               {
@@ -122,97 +80,55 @@ import FilteredLogs from './FilteredLogs.vue';
                 description: "This is a sub-page of Page 2"
               },
               {
-                name: "Selected Logs",
+                name: "Compressed Logs",
                 description: "This is another sub-page of Page 2"
               }
             ]
           },
           // {
-          //   name: "Alert",
-          //   description: "This is the third page",
+          //   name: "Knowledge Repo",
+          //   description: "This is the fifth page",
           //   children: [
           //     {
-          //       name: "Sub-page 1",
-          //       description: "This is a sub-page of Page 3"
-          //     }
-          //   ]
-          // },
-          // {
-          //   name: "Log Graph",
-          //   description: "This is the fourth page",
-          //   children: [
-          //     {
-          //       name: "Reduced Log Graph",
-          //       description: "This is a sub-page of Page 4"
+          //       name: "Svchost",
+          //       description: "This is a sub-page of Page 5"
           //     },
           //     {
-          //       name: "Alert Graph(T1105)",
-          //       description: "This is another sub-page of Page 4"
+          //       name: "Rundll32",
+          //       description: "This is another sub-page of Page 5"
           //     },
           //     {
-          //       name: "Alert Graph(T1036)",
-          //       description: "This is another sub-page of Page 4"
-          //     }
-          //   ]
-          // },
-          {
-            name: "Knowledge Repo",
-            description: "This is the fifth page",
-            children: [
-              {
-                name: "Svchost",
-                description: "This is a sub-page of Page 5"
-              },
-              {
-                name: "Rundll32",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "Regsvr32",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "Explorer",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "cmd",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "Powershell",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "sc",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "lsass",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "Service",
-                description: "This is another sub-page of Page 5"
-              },
-              {
-                name: "wmic",
-                description: "This is another sub-page of Page 5"
-              },
-            ]
-          },
-          // {
-          //   name: "KeyLines Test",
-          //   description: "This is the sixth page",
-          //   children: [
-          //     {
-          //       name: "Sub-page 1",
-          //       description: "This is a sub-page of Page 6"
+          //       name: "Regsvr32",
+          //       description: "This is another sub-page of Page 5"
           //     },
           //     {
-          //       name: "Sub-page 2",
-          //       description: "This is another sub-page of Page 6"
-          //     }
+          //       name: "Explorer",
+          //       description: "This is another sub-page of Page 5"
+          //     },
+          //     {
+          //       name: "cmd",
+          //       description: "This is another sub-page of Page 5"
+          //     },
+          //     {
+          //       name: "Powershell",
+          //       description: "This is another sub-page of Page 5"
+          //     },
+          //     {
+          //       name: "sc",
+          //       description: "This is another sub-page of Page 5"
+          //     },
+          //     {
+          //       name: "lsass",
+          //       description: "This is another sub-page of Page 5"
+          //     },
+          //     {
+          //       name: "Service",
+          //       description: "This is another sub-page of Page 5"
+          //     },
+          //     {
+          //       name: "wmic",
+          //       description: "This is another sub-page of Page 5"
+          //     },
           //   ]
           // },
           {
@@ -248,10 +164,6 @@ import FilteredLogs from './FilteredLogs.vue';
         this.currentPage = 0; // 将当前页面重置为初始流程图页面
         this.childPage = null;
       },
-      openAlertGraphPage() {
-        const url = 'http://localhost:7474/browser/';
-        window.open(url, '_blank');
-      }
     }
   });
   

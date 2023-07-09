@@ -1,7 +1,7 @@
 <template>
-    <h1>Network Logs</h1>
+    <h1>Powershell Logs</h1>
     <div>
-      <el-table :data="currentPageData" style="width: 100%">
+      <el-table :data="currentPageData" :row-class-name="getRowClass" style="width: 100%">
         <el-table-column
           v-for="column in tableColumns"
           :key="column.name"
@@ -35,30 +35,34 @@
       return {
         tableData: [],
         tableColumns: [
-          {name: 'ts', 'type': 'string'},
-          {name: 'uid', 'type': 'string'},
-          {name: 'id.orig_h', 'type': 'string'},
-          {name: 'id.orig_p', 'type': 'string'},
-          {name: 'id.resp_h', 'type': 'string'},
-          {name: 'id.resp_p', 'type': 'string'},
-          {name: 'proto', 'type': 'string'},
-          {name: 'service', 'type': 'string'},
-          {name: 'duration', 'type': 'string'},
-          {name: 'orig_bytes', 'type': 'string'},
-          {name: 'resp_bytes', 'type': 'string'},
-          {name: 'conn_state', 'type': 'string'},
-          {name: 'local_orig', 'type': 'string'},
-          {name: 'local_resp', 'type': 'string'},
-          {name: 'missed_bytes', 'type': 'string'},
-          {name: 'history', 'type': 'string'},
-          {name: 'orig_pkts', 'type': 'string'},
-          {name: 'orig_ip_bytes', 'type': 'string'},
-          {name: 'resp_pkts', 'type': 'string'},
-          {name: 'resp_ip_bytes', 'type': 'string'},
-          {name: 'tunnel_parents', 'type': 'string'}
+        {name: '@timestamp', 'type': 'string'},
+        {name: '@version', 'type': 'string'},
+        {name: 'Category', 'type': 'string'},
+        {name: 'Channel', 'type': 'string'},
+        {name: 'EventID', 'type': 'string'},
+        {name: 'EventReceivedTime', 'type': 'string'},
+        {name: 'EventTime', 'type': 'string'},
+        {name: 'EventType', 'type': 'string'},
+        {name: 'ExecutionProcessID', 'type': 'string'},
+        {name: 'Hostname', 'type': 'string'},
+        {name: 'Keywords', 'type': 'string'},
+        {name: 'Message', 'type': 'string'},
+        {name: 'Opcode', 'type': 'string'},
+        {name: 'RecordNumber', 'type': 'string'},
+        {name: 'Severity', 'type': 'string'},
+        {name: 'SeverityValue', 'type': 'string'},
+        {name: 'SourceModuleName', 'type': 'string'},
+        {name: 'SourceModuleType', 'type': 'string'},
+        {name: 'SourceName', 'type': 'string'},
+        {name: 'Task', 'type': 'string'},
+        {name: 'ThreadID', 'type': 'string'},
+        {name: 'host', 'type': 'string'},
+        {name: 'port', 'type': 'string'},
+        {name: 'tags', 'type': 'string'}
         ],  
         currentPage: 1,
         pageSize: 5,
+        redRow: 3,
       };
     },
     computed: {
@@ -73,7 +77,7 @@
     },
     methods: {
       loadCSVData() {
-        const csvFilePath1 = '/static/conn.csv';
+        const csvFilePath1 = '/static/powershell.csv';
         // const csvFilePath2 = '/static/apt29_log.csv';
   
         const parseCsvFile = (filePath) => {
@@ -98,6 +102,12 @@
       handlePageChange(currentPage) {
         this.currentPage = currentPage;
       },
+      getRowClass(redRow, index) {
+      if (index === redRow) {
+        return 'el-table__row--red';
+      }
+      return '';
+    },
     },
   });
   </script>
@@ -142,5 +152,10 @@
   .el-table .cell {
     border-right: 1px solid #000;
   }
+
+  .el-table__row--red {
+  background-color: red;
+  color: white;
+}
   </style>
   

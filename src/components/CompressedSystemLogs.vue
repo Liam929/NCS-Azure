@@ -1,5 +1,5 @@
 <template>
-    <h1>Network Logs</h1>
+    <h1>Compressed System Logs</h1>
     <div>
       <el-table :data="currentPageData" style="width: 100%">
         <el-table-column
@@ -35,30 +35,15 @@
       return {
         tableData: [],
         tableColumns: [
-          {name: 'ts', 'type': 'string'},
-          {name: 'uid', 'type': 'string'},
-          {name: 'id.orig_h', 'type': 'string'},
-          {name: 'id.orig_p', 'type': 'string'},
-          {name: 'id.resp_h', 'type': 'string'},
-          {name: 'id.resp_p', 'type': 'string'},
-          {name: 'proto', 'type': 'string'},
-          {name: 'service', 'type': 'string'},
-          {name: 'duration', 'type': 'string'},
-          {name: 'orig_bytes', 'type': 'string'},
-          {name: 'resp_bytes', 'type': 'string'},
-          {name: 'conn_state', 'type': 'string'},
-          {name: 'local_orig', 'type': 'string'},
-          {name: 'local_resp', 'type': 'string'},
-          {name: 'missed_bytes', 'type': 'string'},
-          {name: 'history', 'type': 'string'},
-          {name: 'orig_pkts', 'type': 'string'},
-          {name: 'orig_ip_bytes', 'type': 'string'},
-          {name: 'resp_pkts', 'type': 'string'},
-          {name: 'resp_ip_bytes', 'type': 'string'},
-          {name: 'tunnel_parents', 'type': 'string'}
+        {name: 'Time of Day', 'type': 'string'},
+        {name: 'Process Name', 'type': 'string'},
+        {name: 'PID', 'type': 'string'},
+        {name: 'Operation', 'type': 'string'},
+        {name: 'Path', 'type': 'string'},
+        {name: 'Detail', 'type': 'string'}
         ],  
         currentPage: 1,
-        pageSize: 5,
+        pageSize: 5, // 每页显示的行数
       };
     },
     computed: {
@@ -73,27 +58,14 @@
     },
     methods: {
       loadCSVData() {
-        const csvFilePath1 = '/static/conn.csv';
-        // const csvFilePath2 = '/static/apt29_log.csv';
-  
-        const parseCsvFile = (filePath) => {
-          return new Promise((resolve, reject) => {
-            Papa.parse(filePath, {
-              download: true,
-              header: true,
-              complete: results => resolve(results.data),
-              error: err => reject(err)
-            });
-          });
-        };
-        Promise.all([
-          parseCsvFile(csvFilePath1),
-        ])
-        .then(([data1]) => {
-          console.log(data1); 
-          this.tableData = [...data1];
-        })
-        .catch(err => console.error(err));
+        const csvFilePath = 'static/svchost writing a file to a UNC path (T1105).reduce.csv';
+        Papa.parse(csvFilePath, {
+          download: true,
+          header: true,
+          complete: (results) => {
+            this.tableData = results.data;
+          },
+        });
       },
       handlePageChange(currentPage) {
         this.currentPage = currentPage;
@@ -101,7 +73,6 @@
     },
   });
   </script>
-  
   
   
   <style scoped>
@@ -143,4 +114,3 @@
     border-right: 1px solid #000;
   }
   </style>
-  
